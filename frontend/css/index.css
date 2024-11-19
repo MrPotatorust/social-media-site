@@ -1,0 +1,19 @@
+#nav-ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#nav-ul li a {
+  margin-right: 5px;
+  margin-left: 5px;
+  text-decoration: none;
+  color: black;
+  border-style: solid;
+  border-width: 2px;
+  padding: 2px;
+  border-radius: 10px;
+}
+#nav-ul li a:hover {
+  color: white;
+}
