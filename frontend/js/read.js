@@ -1,7 +1,6 @@
-import {readPosts} from "./apiCalls.js";
+import { readPosts } from "./apiCalls.js";
 
 const postsEl = document.getElementById("posts");
-
 const refreshPostsEl = document.getElementById("refresh-posts");
 
 refreshPostsEl.addEventListener("click", listNewPosts);
@@ -11,15 +10,16 @@ async function listNewPosts() {
 
   console.log(res);
   let postsElInnerHtml = res.reduce(
-    (posts, post) => posts + `
+    (posts, post) =>
+      posts +
+      `
     <div class="post">
     <h3>${post.title}</h3>
     <p>${post.text}</p>
-    <p>Likes: ${post.likes} Saves: ${post.saves} Reposts: ${post.reposts} ${post.author} ${post.pub_date}</p>
+    <p>Likes: ${post.likes} <button>L</button> Saves: ${post.saves} <button>S</button> Reposts: ${post.reposts} <button>R</button> ${post.author} ${post.pub_date}</p>
     </div>
     `,
     ""
   );
-  console.log(postsElInnerHtml);
   postsEl.innerHTML = postsElInnerHtml;
 }

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="../css/normalize.css" />
     <link rel="stylesheet" href="../css/index.css" />
     <title>Posts</title>
   </head>
@@ -16,7 +16,48 @@
         <li><a href="../html/read.html">read posts</a></li>
       </ul>
     </nav>
-    <p>register</p>
-    <script type="module" src="../js/index.js"></script>
+    <div class="registration auth-forms">
+      <form name="registerForm">
+        <label>
+          First name
+          <input type="text" name="first-name" />
+        </label>
+        <label>
+          Last name
+          <input type="text" name="last-name"
+        /></label>
+        <label>
+          Username
+          <input type="text" name="username"
+        /></label>
+        <label>
+          Email
+          <input type="email" name="email"
+        /></label>
+        <label>
+          Password
+          <input type="password" name="password1"
+        /></label>
+        <label>
+          Password (Repeat)
+          <input type="password" name="password2"
+        /></label>
+        <button type="button" id="register-btn">Register</button>
+      </form>
+    </div>
+    <div class="login auth-forms">
+      <form name="loginForm">
+        <label>
+          Username
+          <input type="text" name="username"
+        /></label>
+        <label>
+          Password
+          <input type="password" name="password"
+        /></label>
+      </form>
+    </div>
+    <button type="button" id="login-btn">Login</button>
+    <script type="module" src="../js/registerLogin.js"></script>
   </body>
 </html>

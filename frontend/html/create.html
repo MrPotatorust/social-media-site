@@ -16,13 +16,19 @@
         <li><a href="../html/read.html">read posts</a></li>
       </ul>
     </nav>
-    <form
-      name="myForm"
-      onsubmit="return validateForm()"
-      id="form-main"
-    >
-      <input type="text" name="fname" />
-      <button type="button" id="create-btn">create</button>
+    <form name="lookupForm" id="form-main">
+      <label>
+        Title
+        <input type="text" name="post-title" />
+      </label>
+      <label>
+        Text
+        <input type="text" name="post-text" />
+      </label>
+      <label>
+        Send post
+        <button type="button" id="create-btn">create</button>
+      </label>
     </form>
     <script type="module" src="../js/create.js"></script>
   </body>
