@@ -1,7 +1,10 @@
 export async function readPosts() {
   const url = "http://127.0.0.1:8000/api/read_posts";
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+    });
     return response.json();
   } catch (err) {
     return `Fetch of readPosts failed ${err}`;
@@ -32,15 +35,15 @@ export async function createPost(title, text, author) {
 export async function registerUser(formData) {
   const url = "http://127.0.0.1:8000/api/register";
   try {
-    const response = fetch(url, {
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        ...formData
-      })
+        ...formData,
+      }),
     });
     return await response.json();
   } catch (err) {
@@ -48,16 +51,23 @@ export async function registerUser(formData) {
   }
 }
 
-export async function loginUser() {
+export async function loginUser(formData) {
   const url = "http://127.0.0.1:8000/api/login";
+  let csrfToken = await getNewCsrf();
+
   try {
-    const response = fetch(url, {
+    const token = csrfToken.csrfToken || csrfToken;
+    const response = await fetch(url, {
+      credentials: "include",
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        "X-CSRFToken": token,
       },
-      body: {},
+      body: JSON.stringify({
+        ...formData,
+      }),
     });
     return await response.json();
   } catch (err) {
@@ -65,3 +75,40 @@ export async function loginUser() {
   }
 }
 
+export async function testToken() {
+  const url = "http://127.0.0.1:8000/api/test_token";
+  let csrfToken = await getNewCsrf();
+
+  try {
+    const token = csrfToken.csrfToken || csrfToken;
+    const response = await fetch(url, {
+      credentials: "include",
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": token,
+      },
+    });
+    // console.log(response.json());
+  } catch {
+    // console.log("testToken failed");
+  }
+}
+
+export async function getNewCsrf() {
+  const url = "http://127.0.0.1:8000/api/get_new_csrf";
+
+  try {
+    const response = await fetch(url, {
+      credentials: "include", // Important for cookies
+      method: "GET", // Explicitly set method
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return await response.json();
+  } catch {
+    return "null";
+  }
+}

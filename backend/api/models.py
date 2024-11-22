@@ -11,3 +11,6 @@ class Post(models.Model):
     reposts = models.IntegerField(default=0)
     saves = models.IntegerField(default=0)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title

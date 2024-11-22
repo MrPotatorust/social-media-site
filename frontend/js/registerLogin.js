@@ -10,7 +10,6 @@ registerBtn.addEventListener("click", register);
 loginBtn.addEventListener("click", login);
 
 function register() {
-
   const firstName = registerForm["first-name"];
   const lastName = registerForm["last-name"];
   const username = registerForm["username"];
@@ -78,7 +77,7 @@ function register() {
       username: username.value,
       email: email.value,
       password: password.value,
-    }
+    };
     registerUser(newForm);
   } else {
     registerForm.appendChild(alertP);
@@ -89,5 +88,16 @@ function login() {
   const username = loginForm["username"];
   const password = loginForm["password"];
 
-  loginUser();
+  const formData = {
+    username: username.value,
+    password: password.value,
+  };
+  loginUser(formData);
 }
+
+// TEMPORARY
+import { testToken } from "./apiCalls.js";
+
+const testBtn = document.getElementById("test-btn");
+
+testBtn.addEventListener("click", testToken);
