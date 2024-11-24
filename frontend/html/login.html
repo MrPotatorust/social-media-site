@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/normalize.css" />
+    <link rel="stylesheet" href="../css/index.css" />
+  </head>
+  <body>
+    <ul id="nav-ul">
+      <li><a href="../html/index.html">home</a></li>
+      <li><a href="../html/register.html">login or register</a></li>
+      <li><a href="../html/create.html">create post</a></li>
+      <li><a href="../html/read.html">read posts</a></li>
+    </ul>
+    <div class="login auth-form-container">
+      <form name="loginForm" class="auth-form">
+        <label class="form-lb">
+          Username
+          <input type="text" name="username"
+        /></label>
+        <label class="form-lb">
+          Password
+          <input type="password" name="password"
+        /></label>
+        <p>
+          Do you want to create an account?
+          <a href="/frontend/html/login.html">Create it here</a>
+        </p>
+        <button type="button" id="login-btn" class="form-btn">Login</button>
+      </form>
+    </div>
+    <script type="module" src="../js/login.js"></script>
+  </body>
+</html>

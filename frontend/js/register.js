@@ -1,13 +1,14 @@
-import { registerUser, loginUser } from "./apiCalls.js";
+import { registerUser } from "./apiCalls.js";
+import { isLoggedIn } from "./auth.js";
+isLoggedIn();
 
 const registerForm = document.forms["registerForm"];
-const loginForm = document.forms["loginForm"];
 
 const registerBtn = document.getElementById("register-btn");
-const loginBtn = document.getElementById("login-btn");
 
 registerBtn.addEventListener("click", register);
-loginBtn.addEventListener("click", login);
+
+// ! REWORK THIS IF HELL
 
 function register() {
   const firstName = registerForm["first-name"];
@@ -51,12 +52,12 @@ function register() {
     validForm = false;
   }
   if (!email.value.toLowerCase().match(re)) {
-    alertP.textContent += "\n Enter a valid email";
+    alertP.textContent += " Enter a valid email";
     email.classList.add("red-border");
     validForm = false;
   }
   if (password.value.length < 10) {
-    alertP.textContent += "\n Password is too short";
+    alertP.textContent += " Password is too short";
     password.classList.add("red-border");
     validForm = false;
   }
@@ -65,7 +66,7 @@ function register() {
     !password.value ||
     !passwordCheck.value
   ) {
-    alertP.textContent += "\n Passwords dont match";
+    alertP.textContent += " Passwords dont match";
     password.classList.add("red-border");
     passwordCheck.classList.add("red-border");
     validForm = false;
@@ -83,21 +84,3 @@ function register() {
     registerForm.appendChild(alertP);
   }
 }
-
-function login() {
-  const username = loginForm["username"];
-  const password = loginForm["password"];
-
-  const formData = {
-    username: username.value,
-    password: password.value,
-  };
-  loginUser(formData);
-}
-
-// TEMPORARY
-import { testToken } from "./apiCalls.js";
-
-const testBtn = document.getElementById("test-btn");
-
-testBtn.addEventListener("click", testToken);

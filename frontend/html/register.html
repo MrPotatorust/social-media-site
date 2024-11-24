@@ -16,49 +16,36 @@
         <li><a href="../html/read.html">read posts</a></li>
       </ul>
     </nav>
-    <div class="registration auth-forms">
-      <form name="registerForm">
-        <label>
+    <div class="registration auth-form-container">
+      <form name="registerForm" id="register-form" class="auth-form">
+        <label class="form-lb">
           First name
           <input type="text" name="first-name" />
         </label>
-        <label>
+        <label class="form-lb">
           Last name
           <input type="text" name="last-name"
         /></label>
-        <label>
+        <label class="form-lb">
           Username
           <input type="text" name="username"
         /></label>
-        <label>
+        <label class="form-lb">
           Email
           <input type="email" name="email"
         /></label>
-        <label>
+        <label class="form-lb">
           Password
           <input type="password" name="password1"
         /></label>
-        <label>
+        <label class="form-lb">
           Password (Repeat)
           <input type="password" name="password2"
         /></label>
-        <button type="button" id="register-btn">Register</button>
+        <p>Do you already have an account? <a href="/frontend/html/login.html">Login here</a></p>
+        <button type="button" id="register-btn" class="form-btn">Register</button>
       </form>
     </div>
-    <div class="login auth-forms">
-      <form name="loginForm">
-        <label>
-          Username
-          <input type="text" name="username"
-        /></label>
-        <label>
-          Password
-          <input type="password" name="password"
-        /></label>
-        <button type="button" id="login-btn">Login</button>
-      </form>
-    </div>
-    <button id="test-btn">TEST</button>
-    <script type="module" src="../js/registerLogin.js"></script>
+    <script type="module" src="../js/register.js"></script>
   </body>
 </html>

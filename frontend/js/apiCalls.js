@@ -53,46 +53,25 @@ export async function registerUser(formData) {
 
 export async function loginUser(formData) {
   const url = "http://127.0.0.1:8000/api/login";
-  let csrfToken = await getNewCsrf();
+  // let csrfToken = await getNewCsrf()
 
   try {
-    const token = csrfToken.csrfToken || csrfToken;
     const response = await fetch(url, {
       credentials: "include",
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        "X-CSRFToken": token,
+        "X-CSRFToken": "",
       },
       body: JSON.stringify({
         ...formData,
       }),
     });
-    return await response.json();
+
+    return await response.status;
   } catch (err) {
     return `Fetch of loginUser failed ${err}`;
-  }
-}
-
-export async function testToken() {
-  const url = "http://127.0.0.1:8000/api/test_token";
-  let csrfToken = await getNewCsrf();
-
-  try {
-    const token = csrfToken.csrfToken || csrfToken;
-    const response = await fetch(url, {
-      credentials: "include",
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "X-CSRFToken": token,
-      },
-    });
-    // console.log(response.json());
-  } catch {
-    // console.log("testToken failed");
   }
 }
 
@@ -108,6 +87,23 @@ export async function getNewCsrf() {
       },
     });
     return await response.json();
+  } catch {
+    return "null";
+  }
+}
+
+export async function logOutApi() {
+  const url = "http://127.0.0.1:8000/api/logout";
+
+  try {
+    const response = await fetch(url, {
+      credentials: "include", // Important for cookies
+      method: "DELETE", // Explicitly set method
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return await response.status;
   } catch {
     return "null";
   }

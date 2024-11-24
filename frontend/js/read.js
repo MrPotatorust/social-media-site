@@ -1,4 +1,6 @@
 import { readPosts } from "./apiCalls.js";
+import { isLoggedIn } from "./auth.js";
+isLoggedIn();
 
 const postsEl = document.getElementById("posts");
 const refreshPostsEl = document.getElementById("refresh-posts");
