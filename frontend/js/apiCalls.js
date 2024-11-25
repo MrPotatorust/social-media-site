@@ -1,5 +1,5 @@
 export async function readPosts() {
-  const url = "http://127.0.0.1:8000/api/read_posts";
+  const url = "http://127.0.0.1:8000/api/read-posts";
   try {
     const response = await fetch(url, {
       method: "GET",
@@ -12,10 +12,11 @@ export async function readPosts() {
 }
 
 export async function createPost(title, text, author) {
-  const url = "http://127.0.0.1:8000/api/create_post";
+  const url = "http://127.0.0.1:8000/api/create-post";
   try {
     const response = await fetch(url, {
       method: "POST",
+      credentials: "include",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -23,7 +24,7 @@ export async function createPost(title, text, author) {
       body: JSON.stringify({
         title: title,
         text: text,
-        author: author,
+        username: author,
       }),
     });
     return await response.json();
@@ -76,7 +77,7 @@ export async function loginUser(formData) {
 }
 
 export async function getNewCsrf() {
-  const url = "http://127.0.0.1:8000/api/get_new_csrf";
+  const url = "http://127.0.0.1:8000/api/get-new-csrf";
 
   try {
     const response = await fetch(url, {
@@ -102,6 +103,26 @@ export async function logOutApi() {
       headers: {
         "Content-Type": "application/json",
       },
+    });
+    return await response.status;
+  } catch {
+    return "null";
+  }
+}
+
+export async function tokenCheckApi() {
+  const url = "http://127.0.0.1:8000/api/token-check";
+
+  try {
+    const response = await fetch(url, {
+      credentials: "include", // Important for cookies
+      method: "POST", // Explicitly set method
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: localStorage.getItem("username"),
+      }),
     });
     return await response.status;
   } catch {

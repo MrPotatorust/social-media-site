@@ -41,10 +41,17 @@ export function isLoggedIn() {
 export async function logOut() {
   const res = await logOutApi();
 
-  if (res == 204) {
-    localStorage.setItem("username", "null");
-    localStorage.setItem("loggedIn", "false");
-  } else {
+  if (res != 204) {
     console.log("log out failed");
+  }
+  localStorage.setItem("username", "null");
+  localStorage.setItem("loggedIn", "false");
+}
+
+async function tokenCheck() {
+  const response = await tokenCheckApi();
+
+  if (response == 203) {
+    logOut();
   }
 }

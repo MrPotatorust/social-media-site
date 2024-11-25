@@ -15,13 +15,41 @@ from rest_framework.authtoken.models import Token
 
 # Create your views here.
 
+def token_verification(request):
+    try:
+        auth_token = request.COOKIES.get("auth_token")
+        token = Token.objects.get(key=auth_token)
+        
+        token_username = token.user.username
+        request_username = request.data['username']
+
+        print(token_username == request_username)
+
+        if token and token_username == request_username:
+            return True
+        return False
+    except:
+        return False
+
+
 @api_view(['POST'])
 def create_post(request):
-    print(request.data)
-    # serializer = CreatePostSerializer(data=request.data)
-    # if serializer.is_valid():
-    #     serializer.save()
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    if token_verification(request) == False:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+    post_data = {
+        "title":request.data["title"],
+        "text":request.data["text"],
+        "author": User.objects.get(username=request.data["username"]).id
+    }
+
+
+    serializer = CreatePostSerializer(data=post_data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -90,6 +118,17 @@ def logout_user(request):
             response.delete_cookie("auth_token")
             return response
         except:
-            Response(status=status.HTTP_400_BAD_REQUEST)
+            response = Response(status=status.HTTP_400_BAD_REQUEST)
+            response.delete_cookie("auth_token")
+            return response
     
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+# ! IF THE TOKEN IS INVALID THE LOGOUT HANDLING IS ON THE FRONTEND
+@api_view(['POST'])
+def token_check(request):
+    if token_verification(request):
+        return Response(status=status.HTTP_100_CONTINUE)
+    return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+
