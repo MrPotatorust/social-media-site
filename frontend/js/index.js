@@ -1,7 +1,11 @@
-import { isLoggedIn, logOut } from "./auth.js";
+// const testing = {
+//   test: 5,
+//   fun() {
+//     if (this.test > 5) {
+//       return true;
+//     }
+//     return false;
+//   },
+// };
 
-isLoggedIn();
-
-const logoutBtn = document.getElementById("logout-btn");
-
-logoutBtn.addEventListener("click", logOut);
+// console.log(testing.fun());

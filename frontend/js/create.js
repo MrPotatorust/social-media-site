@@ -27,7 +27,6 @@ function validateForm() {
     form.appendChild(alertP);
   } else {
     const username = localStorage.getItem("username");
-    console.log(username);
     createPost(postTitle.value, postText.value, username);
   }
 

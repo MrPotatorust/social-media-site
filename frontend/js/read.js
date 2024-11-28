@@ -7,6 +7,8 @@ const refreshPostsEl = document.getElementById("refresh-posts");
 
 refreshPostsEl.addEventListener("click", listNewPosts);
 
+listNewPosts();
+
 async function listNewPosts() {
   const res = await readPosts();
 

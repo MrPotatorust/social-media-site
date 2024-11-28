@@ -131,4 +131,3 @@ def token_check(request):
     if token_verification(request):
         return Response(status=status.HTTP_100_CONTINUE)
     return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-
