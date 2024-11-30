@@ -12,7 +12,6 @@ listNewPosts();
 async function listNewPosts() {
   const res = await readPosts();
 
-  console.log(res);
   let postsElInnerHtml = res.reduce(
     (posts, post) =>
       posts +
@@ -20,10 +19,23 @@ async function listNewPosts() {
     <div class="post">
     <h3>${post.title}</h3>
     <p>${post.text}</p>
-    <p>Likes: ${post.likes} <button>L</button> Saves: ${post.saves} <button>S</button> Reposts: ${post.reposts} <button>R</button> ${post.author} ${post.pub_date}</p>
+    <p>
+    Likes: ${post.likes} <button class="post-btn-int" value="${post.id}" name="likes" >L</button> 
+    Saves: ${post.saves} <button class="post-btn-int" value="${post.id}" name="saves" >S</button>
+    Reposts: ${post.reposts} <button class="post-btn-int" value="${post.id}" name="reposts" on>R</button>
+    ${post.author} ${post.pub_date}</p>
     </div>
     `,
     ""
   );
   postsEl.innerHTML = postsElInnerHtml;
+  const postBtns = document.getElementsByClassName("post-btn-int");
+
+  Array.from(postBtns).forEach((button) => {
+    button.addEventListener("click", handlePostBtnInteraction);
+  });
+}
+
+function handlePostBtnInteraction(event) {
+  console.log(event.target);
 }
