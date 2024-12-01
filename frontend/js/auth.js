@@ -1,4 +1,4 @@
-import { logOutApi } from "./apiCalls.js";
+import { logOutApi, tokenCheckApi } from "./apiCalls.js";
 
 const routes = {
   "/index.html": {
@@ -48,7 +48,7 @@ export async function logOut() {
   localStorage.setItem("loggedIn", "false");
 }
 
-async function tokenCheck() {
+export async function tokenCheck() {
   const response = await tokenCheckApi();
 
   if (response == 203) {

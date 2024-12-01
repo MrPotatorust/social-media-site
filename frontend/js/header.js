@@ -1,5 +1,9 @@
-import { isLoggedIn, logOut } from "./auth.js";
+import { isLoggedIn, logOut, tokenCheck } from "./auth.js";
 
+// ! THIS IS A PROBLEM BECAUSE THE isLoggedIN can finish before the tokenCheck can log out the user
+// ! FIX LATER
+
+tokenCheck()
 isLoggedIn();
 
 const navElements = {

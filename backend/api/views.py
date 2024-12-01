@@ -5,6 +5,7 @@ from .models import Post
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from .serializers import PostSerializer, UserSerializer, CreatePostSerializer
+from django.db.models import Count
 from django.middleware.csrf import get_token
 from datetime import timedelta
 from django.utils.timezone import now
@@ -61,7 +62,9 @@ def read_post(request, pk):
 
 @api_view(['GET'])
 def read_posts(request):
-    return Response(PostSerializer(Post.objects.all()[0:20], many=True).data, status=status.HTTP_200_OK)
+    queryset = Post.objects.all()[0:20]
+    print(PostSerializer(queryset, many=True).data)
+    return Response(PostSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
