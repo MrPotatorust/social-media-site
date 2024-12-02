@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .models import Post
+from .models import Post, Likes, Saves, Reposts
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from .serializers import PostSerializer, UserSerializer, CreatePostSerializer
@@ -62,8 +62,7 @@ def read_post(request, pk):
 
 @api_view(['GET'])
 def read_posts(request):
-    queryset = Post.objects.all()[0:20]
-    print(PostSerializer(queryset, many=True).data)
+    queryset = Post.objects.all()[0:20].annotate(likes_count = Count("likes")).annotate(saves_count = Count("saves")).annotate(reposts_count = Count("reposts"))
     return Response(PostSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
 
 

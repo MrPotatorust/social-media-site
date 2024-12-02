@@ -6,10 +6,13 @@ from django.contrib.auth.models import User
 class PostSerializer(serializers.ModelSerializer):
 
     author = serializers.CharField()
+    likes_count = serializers.IntegerField()
+    reposts_count = serializers.IntegerField()
+    saves_count = serializers.IntegerField()
 
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ['id', 'title', 'text', 'pub_date', 'author', 'likes_count', 'saves_count', 'reposts_count']
 
 
 

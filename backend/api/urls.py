@@ -2,7 +2,7 @@ from . import views
 from django.urls import path
 
 urlpatterns = [
-    path('create_post', views.create_post, name='creates a post'),
+    path('create-post', views.create_post, name='creates a post'),
     path('read-post/<int:pk>', views.read_post, name='returns one post'),
     path('read-posts', views.read_posts, name='returns first 20 posts'),
     path('register', views.register_user, name='registers the user'),
