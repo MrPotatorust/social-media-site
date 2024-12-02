@@ -52,3 +52,7 @@
 .align-right {
   margin-left: auto;
 }
+
+.toggled-like-btn {
+  background-color: brown;
+}

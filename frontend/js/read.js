@@ -1,4 +1,4 @@
-import { readPosts } from "./apiCalls.js";
+import { readPosts, like } from "./apiCalls.js";
 import { isLoggedIn } from "./auth.js";
 isLoggedIn();
 
@@ -11,7 +11,7 @@ listNewPosts();
 
 async function listNewPosts() {
   const res = await readPosts();
-  console.log(res)
+  console.log(res);
 
   let postsElInnerHtml = res.reduce(
     (posts, post) =>
@@ -21,9 +21,9 @@ async function listNewPosts() {
     <h3>${post.title}</h3>
     <p>${post.text}</p>
     <p>
-    Likes: ${post.likes_count} <button class="post-btn-int" value="${post.id}" name="likes" >L</button> 
-    Saves: ${post.saves_count} <button class="post-btn-int" value="${post.id}" name="saves_count" >S</button>
-    Reposts: ${post.reposts_count} <button class="post-btn-int" value="${post.id}" name="reposts" on_count>R</button>
+    Likes: ${post.likes_count} <button class="post-btn-int" id="${post.id}" name="likes">L</button> 
+    Saves: ${post.saves_count} <button class="post-btn-int" id="${post.id}" name="saves_count">S</button>
+    Reposts: ${post.reposts_count} <button class="post-btn-int" id="${post.id}" name="reposts">R</button>
     ${post.author} ${post.pub_date}</p>
     </div>
     `,
@@ -38,5 +38,7 @@ async function listNewPosts() {
 }
 
 function handlePostBtnInteraction(event) {
-  console.log(event.target);
+  const target = event.target;
+  target.classList.toggle("toggled-like-btn");
+  like(target.id);
 }

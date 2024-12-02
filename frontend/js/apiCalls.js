@@ -129,3 +129,24 @@ export async function tokenCheckApi() {
     return "null";
   }
 }
+
+export async function like(postId) {
+  const url = "http://127.0.0.1:8000/api/like";
+
+  try {
+    const response = await fetch(url, {
+      credentials: "include", // Important for cookies
+      method: "POST", // Explicitly set method
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        post_id: postId,
+        username: localStorage.getItem("username"),
+      }),
+    });
+    return await response.status;
+  } catch {
+    return "null";
+  }
+}

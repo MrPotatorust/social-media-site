@@ -127,6 +127,29 @@ def logout_user(request):
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+def like(request):
+
+
+    if token_verification(request) == False:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    
+    data = request.data
+
+    try:
+        user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
+        post = Post.objects.get(id=data["post_id"])
+    except:
+        return Response("failed to get an object instance", status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        Likes.objects.get(user_id=user, post_id=post).delete()
+        return Response("disliked", status=status.HTTP_200_OK)
+    except:
+        Likes.objects.create(user_id=user, post_id=post)
+        return Response("liked", status=status.HTTP_200_OK)
+
+
 # ! IF THE TOKEN IS INVALID THE LOGOUT HANDLING IS ON THE FRONTEND
 @api_view(['POST'])
 def token_check(request):

@@ -9,5 +9,6 @@ urlpatterns = [
     path('login', views.login_user, name="logins the user"),
     path('get-new-csrf', views.get_new_csrf, name="gets a csrf token"),
     path('logout', views.logout_user, name="logs out the user"),
-    path('token-check', views.token_check, name="checks if the auth token is valid")
+    path('token-check', views.token_check, name="checks if the auth token is valid"),
+    path('like', views.like, name="add a like to a post")
 ]
