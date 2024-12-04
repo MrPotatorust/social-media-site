@@ -13,10 +13,13 @@ from django.utils.timezone import now
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
 
+from .custom_decorator import auth_check
+
 
 # Create your views here.
 
 def token_verification(request):
+    
     try:
         auth_token = request.COOKIES.get("auth_token")
         token = Token.objects.get(key=auth_token)
@@ -140,8 +143,8 @@ def logout_user(request):
     
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
-
 @api_view(['POST'])
+@auth_check
 def handle_post_interaction(request):
 
 
