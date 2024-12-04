@@ -25,6 +25,9 @@ class Likes(models.Model):
             models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-likes")
         ]
 
+    def __str__(self):
+        return f"{self.user_id}, {self.post_id}"
+
 
 class Saves(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

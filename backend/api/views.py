@@ -5,7 +5,7 @@ from .models import Post, Likes, Saves, Reposts
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from .serializers import PostSerializer, UserSerializer, CreatePostSerializer
-from django.db.models import Count
+from django.db.models import Count, Case, When, Value, IntegerField, F, Exists, OuterRef
 from django.middleware.csrf import get_token
 from datetime import timedelta
 from django.utils.timezone import now
@@ -62,8 +62,22 @@ def read_post(request, pk):
 
 @api_view(['GET'])
 def read_posts(request):
-    queryset = Post.objects.all()[0:20].annotate(likes_count = Count("likes")).annotate(saves_count = Count("saves")).annotate(reposts_count = Count("reposts"))
-    return Response(PostSerializer(queryset, many=True).data, status=status.HTTP_200_OK)
+
+
+    data = request.data
+
+    try:
+        user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
+    except:
+        return Response("failed to get an object instance", status=status.HTTP_400_BAD_REQUEST)
+
+    likes = Likes.objects.all().filter(user_id=user, post_id=OuterRef('pk'))
+    saves = Saves.objects.all().filter(user_id=user, post_id=OuterRef('pk'))
+    reposts = Reposts.objects.all().filter(user_id=user, post_id=OuterRef('pk'))
+
+    queryset = Post.objects.all()[0:20].annotate(likes_count = Count("likes")).annotate(saves_count = Count("saves")).annotate(reposts_count = Count("reposts")).annotate(liked = Exists(likes)).annotate(saved = Exists(saves)).annotate(reposted = Exists(reposts))
+    serializer = PostSerializer(queryset, many=True).data
+    return Response(serializer, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -128,26 +142,36 @@ def logout_user(request):
 
 
 @api_view(['POST'])
-def like(request):
+def handle_post_interaction(request):
 
 
     if token_verification(request) == False:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     data = request.data
+    data_action = data['action']
+
+
+    if data_action == 'likes':
+        model = Likes
+    elif data_action == 'saves':
+        model = Saves
+    else:
+        model = Reposts
 
     try:
         user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
         post = Post.objects.get(id=data["post_id"])
     except:
-        return Response("failed to get an object instance", status=status.HTTP_400_BAD_REQUEST)
+        return Response("failed to get an user/post object instance", status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        Likes.objects.get(user_id=user, post_id=post).delete()
-        return Response("disliked", status=status.HTTP_200_OK)
+        model.objects.get(user_id=user, post_id=post).delete()
+        return Response("changed value to false", status=status.HTTP_200_OK)
     except:
-        Likes.objects.create(user_id=user, post_id=post)
-        return Response("liked", status=status.HTTP_200_OK)
+        model.objects.create(user_id=user, post_id=post)
+        return Response("changed value to true", status=status.HTTP_200_OK)
+
 
 
 # ! IF THE TOKEN IS INVALID THE LOGOUT HANDLING IS ON THE FRONTEND

@@ -130,8 +130,8 @@ export async function tokenCheckApi() {
   }
 }
 
-export async function like(postId) {
-  const url = "http://127.0.0.1:8000/api/like";
+export async function postBtnInteraction(postId, action) {
+  const url = "http://127.0.0.1:8000/api/handle-post-interaction";
 
   try {
     const response = await fetch(url, {
@@ -143,6 +143,7 @@ export async function like(postId) {
       body: JSON.stringify({
         post_id: postId,
         username: localStorage.getItem("username"),
+        action: action
       }),
     });
     return await response.status;

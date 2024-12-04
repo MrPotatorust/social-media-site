@@ -9,10 +9,13 @@ class PostSerializer(serializers.ModelSerializer):
     likes_count = serializers.IntegerField()
     reposts_count = serializers.IntegerField()
     saves_count = serializers.IntegerField()
+    liked = serializers.BooleanField()
+    saved = serializers.BooleanField()
+    reposted = serializers.BooleanField()
 
     class Meta:
         model = Post
-        fields = ['id', 'title', 'text', 'pub_date', 'author', 'likes_count', 'saves_count', 'reposts_count']
+        fields = ['id', 'title', 'text', 'pub_date', 'author', 'likes_count', 'saves_count', 'reposts_count', 'liked', 'saved', 'reposted']
 
 
 
