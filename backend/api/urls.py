@@ -10,5 +10,6 @@ urlpatterns = [
     path('get-new-csrf', views.get_new_csrf, name="gets a csrf token"),
     path('logout', views.logout_user, name="logs out the user"),
     path('token-check', views.token_check, name="checks if the auth token is valid"),
-    path('handle-post-interaction', views.handle_post_interaction, name="handles, likes, saves, reposts")
+    path('handle-post-interaction', views.handle_post_interaction, name="handles, likes, saves, reposts"),
+    path('get-profile/<int:id>', views.get_profile, name="returns a user profile")
 ]

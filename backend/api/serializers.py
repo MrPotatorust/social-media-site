@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Likes
+from .models import Post, Likes, UserMetaData
 from django.contrib.auth.models import User
 
 
@@ -26,8 +26,25 @@ class CreatePostSerializer(serializers.ModelSerializer):
         fields = ['title', 'text', 'author']
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserRegisterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
         fields = '__all__'
+
+
+
+
+class UserMetaDataSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserMetaData
+        fields = '__all__'
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    usermetadata = UserMetaDataSerializer()
+
+    class Meta:
+        model = User
+        fields = ['username', 'last_login', 'date_joined', 'usermetadata']

@@ -21,6 +21,10 @@ const routes = {
     auth: "false",
     loggedInRestriction: "true",
   },
+  "/profile.html": {
+    auth: "true",
+    loggedInRestriction: "false",
+  },
 };
 
 export function isLoggedIn() {

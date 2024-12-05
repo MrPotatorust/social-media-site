@@ -25,6 +25,12 @@ const navElements = {
       return localStorage.getItem("loggedIn") === "false";
     },
   },
+  profile: {
+    html: `<li class="align-center"><a href="../html/profile.html" id="profile">profile</a></li>`,
+    condition() {
+      return localStorage.getItem("loggedIn") === "true";
+    },
+  },
   logout: {
     html: `<li class="align-right"><a href="" id="logout-btn">Log out</a></li>`,
     condition() {

@@ -1,14 +1,14 @@
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .models import Post, Likes, Saves, Reposts
+from .models import Post, Likes, Saves, Reposts, UserMetaData
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from .serializers import PostSerializer, UserSerializer, CreatePostSerializer
+from .serializers import PostSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer
 from django.db.models import Count, Case, When, Value, IntegerField, F, Exists, OuterRef
 from django.middleware.csrf import get_token
 from datetime import timedelta
-from django.utils.timezone import now
+from django.utils import timezone
 
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
@@ -18,30 +18,25 @@ from .custom_decorator import auth_check
 
 # Create your views here.
 
-def token_verification(request):
+# def token_verification(request):
     
-    try:
-        auth_token = request.COOKIES.get("auth_token")
-        token = Token.objects.get(key=auth_token)
+#     try:
+#         auth_token = request.COOKIES.get("auth_token")
+#         token = Token.objects.get(key=auth_token)
         
-        token_username = token.user.username
-        request_username = request.data['username']
+#         token_username = token.user.username
+#         request_username = request.data['username']
 
-        print(token_username == request_username)
-
-        if token and token_username == request_username:
-            return True
-        return False
-    except:
-        return False
+#         if token and token_username == request_username:
+#             return True
+#         return False
+#     except:
+#         return False
 
 
 @api_view(['POST'])
+@auth_check
 def create_post(request):
-    
-    if token_verification(request) == False:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
-
 
     post_data = {
         "title":request.data["title"],
@@ -63,11 +58,10 @@ def read_post(request, pk):
     return Response(PostSerializer(queryset).data)
 
 
+
+# ! I have to add exception when the user is not logged in because this will throw an error
 @api_view(['GET'])
 def read_posts(request):
-
-
-    data = request.data
 
     try:
         user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
@@ -85,7 +79,7 @@ def read_posts(request):
 
 @api_view(['POST'])
 def register_user(request):
-    serializer = UserSerializer(data=request.data)
+    serializer = UserRegisterSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -115,7 +109,7 @@ def login_user(request):
         return response
     return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-
+# currently not in use
 @api_view(['GET'])
 def get_new_csrf(request):
     return Response({
@@ -146,10 +140,6 @@ def logout_user(request):
 @api_view(['POST'])
 @auth_check
 def handle_post_interaction(request):
-
-
-    if token_verification(request) == False:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     data = request.data
     data_action = data['action']
@@ -176,10 +166,32 @@ def handle_post_interaction(request):
         return Response("changed value to true", status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+# ! find out why auth_check returns 401
+# @auth_check 
+def get_profile(request, id):
+
+    test_queryset = UserMetaData.objects.filter(id=id).first()
+    if not test_queryset:
+        return Response("No profile",status=status.HTTP_200_OK)
+    try:
+        queryset = User.objects.prefetch_related("usermetadata").get(id=id)
+    except:
+        print("what")
+        queryset = "none"
+
+    print(queryset)
+    serializer = ProfileSerializer(queryset).data
+    # UserMetaData.objects.create(user=queryset, last_action=timezone.now(), email_verified=True, language="English", private=False)
+    print(serializer)
+    # return Response(status=status.HTTP_202_ACCEPTED)
+    return Response(serializer, status=status.HTTP_200_OK)
+
+
+
 
 # ! IF THE TOKEN IS INVALID THE LOGOUT HANDLING IS ON THE FRONTEND
 @api_view(['POST'])
+@auth_check
 def token_check(request):
-    if token_verification(request):
-        return Response(status=status.HTTP_100_CONTINUE)
-    return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+    return Response(status=status.HTTP_202_ACCEPTED)

@@ -10,8 +10,10 @@ def auth_check(func):
 
     @wraps(func)
     def wrapper(request, *args, **kwargs):
+        
         try:
             auth_token = request.COOKIES.get("auth_token")
+
 
 
             if not auth_token:
@@ -19,15 +21,20 @@ def auth_check(func):
 
             token = Token.objects.get(key=auth_token)
             
-            token_username = token.user.username
-            request_username = request.data['username']
+            if request.method == 'POST':
 
-            print(token_username == request_username)
+                token_username = token.user.username
+                request_username = request.data['username']
 
-            if token and token_username == request_username:
-                return func(request, *args, **kwargs)
+                if token and token_username == request_username:
+                    return func(request, *args, **kwargs)
+                
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
             
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            elif request.method == 'GET':
+                return func(request, *args, **kwargs)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         

@@ -51,3 +51,15 @@ class Reposts(models.Model):
         constraints=[
             models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-reposts")
         ]
+
+
+class UserMetaData(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    last_action = models.DateTimeField()
+    email_verified = models.BooleanField()
+    language = models.CharField(max_length=13) # ! This has to be reworked with another model 
+    private = models.BooleanField()
+
+
+    def __str__(self):
+        return f"{self.user} {self.last_action} {self.email_verified} {self.language} {self.private}"

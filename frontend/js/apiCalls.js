@@ -76,6 +76,8 @@ export async function loginUser(formData) {
   }
 }
 
+
+// Currently not in use
 export async function getNewCsrf() {
   const url = "http://127.0.0.1:8000/api/get-new-csrf";
 
@@ -88,8 +90,8 @@ export async function getNewCsrf() {
       },
     });
     return await response.json();
-  } catch {
-    return "null";
+  } catch (err) {
+    return `Fetch of getNewCsrf failed ${err}`;
   }
 }
 
@@ -105,8 +107,8 @@ export async function logOutApi() {
       },
     });
     return await response.status;
-  } catch {
-    return "null";
+  } catch (err) {
+    return `Fetch of logOutApi failed ${err}`;
   }
 }
 
@@ -124,9 +126,9 @@ export async function tokenCheckApi() {
         username: localStorage.getItem("username"),
       }),
     });
-    return await response.status;
-  } catch {
-    return "null";
+    return response.status;
+  } catch (err) {
+    return `Fetch of tokenCheckApi failed ${err}`;
   }
 }
 
@@ -143,11 +145,24 @@ export async function postBtnInteraction(postId, action) {
       body: JSON.stringify({
         post_id: postId,
         username: localStorage.getItem("username"),
-        action: action
+        action: action,
       }),
     });
     return await response.status;
-  } catch {
-    return "null";
+  } catch (err) {
+    return `Fetch of postBtn failed ${err}`;
+  }
+}
+
+export async function getProfile(user) {
+  const url = `http://127.0.0.1:8000/api/get-profile/${user}`;
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+    });
+    return await response.json();
+  } catch (err) {
+    return `Fetch of getProfile failed ${err}`;
   }
 }
