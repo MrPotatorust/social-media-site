@@ -58,7 +58,6 @@ def read_post(request, pk):
     return Response(PostSerializer(queryset).data)
 
 
-
 # ! I have to add exception when the user is not logged in because this will throw an error
 @api_view(['GET'])
 def read_posts(request):
@@ -99,7 +98,7 @@ def login_user(request):
         response.set_cookie(
             key='auth_token', 
             value=token.key,  # Assuming you're using token authentication
-            expires=now() + timedelta(days=30),
+            expires=timezone.now() + timedelta(days=30),
             httponly=True,  # Crucial for HTTP-only
             secure=False,    # Only sent over HTTPS
             path="/",
@@ -167,24 +166,17 @@ def handle_post_interaction(request):
 
 
 @api_view(['GET'])
-# ! find out why auth_check returns 401
-# @auth_check 
-def get_profile(request, id):
-
-    test_queryset = UserMetaData.objects.filter(id=id).first()
-    if not test_queryset:
-        return Response("No profile",status=status.HTTP_200_OK)
+@auth_check 
+def get_profile(request, user):
     try:
-        queryset = User.objects.prefetch_related("usermetadata").get(id=id)
+        queryset = User.objects.prefetch_related("usermetadata").get(username=user)
     except:
-        print("what")
-        queryset = "none"
+        return Response("No profile",status=status.HTTP_200_OK)
 
-    print(queryset)
-    serializer = ProfileSerializer(queryset).data
-    # UserMetaData.objects.create(user=queryset, last_action=timezone.now(), email_verified=True, language="English", private=False)
-    print(serializer)
-    # return Response(status=status.HTTP_202_ACCEPTED)
+    try:
+        serializer = ProfileSerializer(queryset).data
+    except:
+        return Response("Could not serialize", status=status.HTTP_403_FORBIDDEN)
     return Response(serializer, status=status.HTTP_200_OK)
 
 

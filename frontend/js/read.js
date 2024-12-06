@@ -21,10 +21,22 @@ async function listNewPosts() {
     <h3>${post.title}</h3>
     <p>${post.text}</p>
     <p>
-    Likes: <span class="likes">${post.likes_count}</span> <button class="post-btn-int ${post.liked ? "toggled-like-btn" : ""}" id="${post.id}" name="likes">L</button> 
-    Saves: <span class="saves">${post.saves_count}</span> <button class="post-btn-int ${post.saved ? "toggled-like-btn" : ""}" id="${post.id}" name="saves">S</button>
-    Reposts: <span class="reposts">${post.reposts_count}</span> <button class="post-btn-int ${post.reposted ? "toggled-like-btn" : ""}" id="${post.id}" name="reposts">R</button>
-    ${post.author} ${post.pub_date}
+    Likes: <span class="likes">${
+      post.likes_count
+    }</span> <button class="post-btn-int ${
+        post.liked ? "toggled-like-btn" : ""
+      }" id="${post.id}" name="likes">L</button> 
+    Saves: <span class="saves">${
+      post.saves_count
+    }</span> <button class="post-btn-int ${
+        post.saved ? "toggled-like-btn" : ""
+      }" id="${post.id}" name="saves">S</button>
+    Reposts: <span class="reposts">${
+      post.reposts_count
+    }</span> <button class="post-btn-int ${
+        post.reposted ? "toggled-like-btn" : ""
+      }" id="${post.id}" name="reposts">R</button>
+    <a href="profile.html?user=${post.author}">${post.author}</a> ${post.pub_date}
     </p>
     </div>
     `,
@@ -43,7 +55,7 @@ function handlePostBtnInteraction(event) {
   target.classList.toggle("toggled-like-btn");
 
   const spanEl = target.closest(`p`).querySelector(`.${target.name}`);
-  
+
   if (target.classList.contains("toggled-like-btn")) {
     spanEl.innerText = parseInt(spanEl.innerText) + 1;
   } else {

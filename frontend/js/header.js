@@ -26,7 +26,7 @@ const navElements = {
     },
   },
   profile: {
-    html: `<li class="align-center"><a href="../html/profile.html" id="profile">profile</a></li>`,
+    html: `<li class="align-center"><a href="../html/profile.html?user=${localStorage.getItem("username")}" id="profile">profile</a></li>`,
     condition() {
       return localStorage.getItem("loggedIn") === "true";
     },

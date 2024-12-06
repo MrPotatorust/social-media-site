@@ -2,12 +2,11 @@ import { getProfile } from "./apiCalls.js";
 
 let params = new URLSearchParams(location.search);
 
-let user = 1
+let user = params.get("user");
 
-// console.log(user);
 
-async function a() {
-    console.log(await getProfile(user))
+async function profileGet() {
+  console.log(await getProfile(user));
 }
 
-a()
+profileGet();
