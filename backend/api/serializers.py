@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Likes, UserMetaData
+from .models import Post, Likes, UserMetaData, Image, Country
 from django.contrib.auth.models import User
 
 
@@ -32,8 +32,15 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields= ['image_name', 'file_path']
 
-
+class CountrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Country
+        fields=['iso', 'name']
 
 class UserMetaDataSerializer(serializers.ModelSerializer):
 
@@ -41,10 +48,27 @@ class UserMetaDataSerializer(serializers.ModelSerializer):
         model = UserMetaData
         fields = '__all__'
 
-class ProfileSerializer(serializers.ModelSerializer):
+# class ProfileSerializer(serializers.ModelSerializer):
 
-    usermetadata = UserMetaDataSerializer()
+#     usermetadata = UserMetaDataSerializer()
+
+#     class Meta:
+#         model = User
+#         fields = ['username', 'last_login', 'date_joined', 'usermetadata']
+
+class TestingUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'last_login', 'date_joined', 'usermetadata']
+        fields = ['username', 'last_login', 'date_joined']
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    profile_img = ImageSerializer()
+    country = CountrySerializer()
+    user = TestingUserSerializer()
+
+    class Meta:
+        model = UserMetaData
+        fields = '__all__'

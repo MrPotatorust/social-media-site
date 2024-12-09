@@ -53,13 +53,27 @@ class Reposts(models.Model):
         ]
 
 
+class Image(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image_name = models.CharField(max_length=30)
+    file_path = models.CharField(default="default_image.jpg", max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Country(models.Model):
+    iso = models.CharField(max_length=2, null=False, unique=True)
+    name = models.CharField(max_length=48, null=False, unique=True)
+
 class UserMetaData(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     last_action = models.DateTimeField()
-    email_verified = models.BooleanField()
+    email_verified = models.BooleanField(default=False)
+    description = models.CharField(max_length=120)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, default=2)
     language = models.CharField(max_length=13) # ! This has to be reworked with another model 
     private = models.BooleanField()
-
+    profile_img = models.ForeignKey(Image, on_delete=models.CASCADE, default=1)
+    
 
     def __str__(self):
         return f"{self.user} {self.last_action} {self.email_verified} {self.language} {self.private}"
+    

@@ -11,5 +11,6 @@ urlpatterns = [
     path('logout', views.logout_user, name="logs out the user"),
     path('token-check', views.token_check, name="checks if the auth token is valid"),
     path('handle-post-interaction', views.handle_post_interaction, name="handles, likes, saves, reposts"),
-    path('get-profile/<str:user>', views.get_profile, name="returns a user profile")
+    path('get-profile/<str:user>', views.get_profile, name="returns a user profile"),
+    path('get-image/<str:image_path>', views.get_image, name="gets an image from a database")
 ]

@@ -165,13 +165,22 @@ def handle_post_interaction(request):
         return Response("changed value to true", status=status.HTTP_200_OK)
 
 
+
 @api_view(['GET'])
 @auth_check 
 def get_profile(request, user):
     try:
-        queryset = User.objects.prefetch_related("usermetadata").get(username=user)
+        queryset = UserMetaData.objects.select_related(
+            "user",
+            "country",
+            "profile_img",                                           
+        ).get(user__username=user)
     except:
         return Response("No profile",status=status.HTTP_200_OK)
+    
+
+    if queryset.private == True:
+        return Response("Profile is private", status=status.HTTP_200_OK)
 
     try:
         serializer = ProfileSerializer(queryset).data
@@ -179,7 +188,14 @@ def get_profile(request, user):
         return Response("Could not serialize", status=status.HTTP_403_FORBIDDEN)
     return Response(serializer, status=status.HTTP_200_OK)
 
+from django.http import FileResponse
 
+@api_view(['GET'])
+def get_image(request, image_path):
+    return FileResponse(
+        open(f'images/{image_path}', 'rb'), 
+        content_type='image/jpeg'
+    )
 
 
 # ! IF THE TOKEN IS INVALID THE LOGOUT HANDLING IS ON THE FRONTEND

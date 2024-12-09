@@ -166,3 +166,16 @@ export async function getProfile(user) {
     return `Fetch of getProfile failed ${err}`;
   }
 }
+
+export async function getImage(imagePath) {
+  const url = `http://127.0.0.1:8000/api/get-image/${imagePath}`;
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+    });
+    return await response.blob();
+  } catch (err) {
+    return `Fetch of getProfile failed ${err}`;
+  }
+}

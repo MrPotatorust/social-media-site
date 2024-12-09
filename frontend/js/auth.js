@@ -25,6 +25,10 @@ const routes = {
     auth: "true",
     loggedInRestriction: "false",
   },
+  "/reset.html": {
+    auth: "false",
+    loggedInRestriction: "false",
+  },
 };
 
 export function isLoggedIn() {
