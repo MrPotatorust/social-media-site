@@ -39,7 +39,6 @@ from .custom_decorator import auth_check
 def create_post(request):
 
     post_data = {
-        "title":request.data["title"],
         "text":request.data["text"],
         "author": User.objects.get(username=request.data["username"]).id
     }
@@ -60,7 +59,7 @@ def read_post(request, pk):
 
 # ! I have to add exception when the user is not logged in because this will throw an error
 @api_view(['GET'])
-def read_posts(request):
+def read_posts(request, search_query):
 
     try:
         user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
@@ -71,7 +70,18 @@ def read_posts(request):
     saves = Saves.objects.all().filter(user_id=user, post_id=OuterRef('pk'))
     reposts = Reposts.objects.all().filter(user_id=user, post_id=OuterRef('pk'))
 
-    queryset = Post.objects.all()[0:20].annotate(likes_count = Count("likes")).annotate(saves_count = Count("saves")).annotate(reposts_count = Count("reposts")).annotate(liked = Exists(likes)).annotate(saved = Exists(saves)).annotate(reposted = Exists(reposts))
+    base_queryset = Post.objects.annotate(
+        likes_count = Count("likes"), 
+        saves_count = Count("saves"),
+        reposts_count = Count("reposts"),
+        liked = Exists(likes),
+        saved = Exists(saves),
+        reposted = Exists(reposts))
+
+    if search_query != 'null':
+        queryset = base_queryset.filter(text__contains = search_query)[0:20]
+    else:
+        queryset = base_queryset[0:20]
     serializer = PostSerializer(queryset, many=True).data
     return Response(serializer, status=status.HTTP_200_OK)
 
@@ -191,9 +201,26 @@ def get_profile(request, user):
 from django.http import FileResponse
 
 @api_view(['GET'])
-def get_image(request, image_path):
+def get_image(request, media_path):
+
+    base_path = "media"
+
+    # 1 equals video, 2 equals videos
+    extensions = {
+        'mp4': 1,
+        'jpg': 2,
+        'jpeg': 2,
+        'webp': 2,
+        'png': 2,
+    }
+
+    if extensions[media_path[-3:]] == 1:
+        search_path = f"{base_path}/videos/{media_path}"
+    else:
+        search_path = f"{base_path}/images/{media_path}"
+
     return FileResponse(
-        open(f'images/{image_path}', 'rb'), 
+        open(search_path, 'rb'), 
         content_type='image/jpeg'
     )
 

@@ -1,4 +1,4 @@
-import { getProfile, getImage } from "./apiCalls.js";
+import { getProfile, getMedia } from "./apiCalls.js";
 
 let params = new URLSearchParams(location.search);
 
@@ -12,7 +12,7 @@ async function profileGet() {
 
   if (typeof profileObj != "string") {
     const profilePicture = URL.createObjectURL(
-      await getImage(profileObj.profile_img.file_path)
+      await getMedia(profileObj.profile_img.file_path)
     );
 
     profileElInnerHtml = `

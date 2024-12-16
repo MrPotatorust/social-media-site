@@ -1,5 +1,12 @@
-export async function readPosts() {
-  const url = "http://127.0.0.1:8000/api/read-posts";
+export async function readPosts(searchQuery) {
+  let modifiedSearchQuery;
+
+  if (searchQuery) {
+    modifiedSearchQuery = searchQuery;
+  } else {
+    modifiedSearchQuery = "null";
+  }
+  const url = `http://127.0.0.1:8000/api/read-posts/${modifiedSearchQuery}`;
   try {
     const response = await fetch(url, {
       method: "GET",
@@ -11,7 +18,7 @@ export async function readPosts() {
   }
 }
 
-export async function createPost(title, text, author) {
+export async function createPost(text, author) {
   const url = "http://127.0.0.1:8000/api/create-post";
   try {
     const response = await fetch(url, {
@@ -22,7 +29,6 @@ export async function createPost(title, text, author) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title: title,
         text: text,
         username: author,
       }),
@@ -75,7 +81,6 @@ export async function loginUser(formData) {
     return `Fetch of loginUser failed ${err}`;
   }
 }
-
 
 // Currently not in use
 export async function getNewCsrf() {
@@ -167,8 +172,8 @@ export async function getProfile(user) {
   }
 }
 
-export async function getImage(imagePath) {
-  const url = `http://127.0.0.1:8000/api/get-image/${imagePath}`;
+export async function getMedia(mediaPath) {
+  const url = `http://127.0.0.1:8000/api/get-image/${mediaPath}`;
   try {
     const response = await fetch(url, {
       method: "GET",

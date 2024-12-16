@@ -10,7 +10,6 @@ createBtn.addEventListener("click", validateForm);
 // ! rework this if hell
 
 function validateForm() {
-  let postTitle = document.forms["lookupForm"]["post-title"];
   let postText = document.forms["lookupForm"]["post-text"];
 
   // Remove any existing alert first
@@ -22,22 +21,18 @@ function validateForm() {
   const alertP = document.createElement("p");
   alertP.id = "form-alert";
 
-  if (postTitle.value == "" || postText.value == "") {
-    alertP.textContent = "You have an empty field/s!";
-    form.appendChild(alertP);
-  } else {
-    const username = localStorage.getItem("username");
-    createPost(postTitle.value, postText.value, username);
-  }
-
-  if (postTitle.value == "") {
-    postTitle.classList.add("red-border");
-  } else {
-    postTitle.classList.remove("red-border");
-  }
   if (postText.value == "") {
     postText.classList.add("red-border");
+    alertP.textContent = "You to enter a post text";
+    form.appendChild(alertP);
   } else {
     postText.classList.remove("red-border");
+    const username = localStorage.getItem("username");
+    const test = async () => {
+      console.log(await createPost(postText.value, username));
+      window.location.replace("/frontend/html/read.html");
+    };
+
+    test();
   }
 }

@@ -6,11 +6,14 @@ const postsEl = document.getElementById("posts");
 const refreshPostsEl = document.getElementById("refresh-posts");
 
 refreshPostsEl.addEventListener("click", listNewPosts);
+let searchQuery = new URLSearchParams(location.search).get("search-field");
 
 listNewPosts();
 
+
+
 async function listNewPosts() {
-  const res = await readPosts();
+  const res = await readPosts(searchQuery);
   console.log(res);
 
   let postsElInnerHtml = res.reduce(
@@ -18,7 +21,6 @@ async function listNewPosts() {
       posts +
       `
     <div class="post">
-    <h3>${post.title}</h3>
     <p>${post.text}</p>
     <p>
     Likes: <span class="likes">${
@@ -36,7 +38,9 @@ async function listNewPosts() {
     }</span> <button class="post-btn-int ${
         post.reposted ? "toggled-like-btn" : ""
       }" id="${post.id}" name="reposts">R</button>
-    <a href="profile.html?user=${post.author}">${post.author}</a> ${post.pub_date}
+    <a href="profile.html?user=${post.author}">${post.author}</a> ${
+        post.pub_date
+      }
     </p>
     </div>
     `,

@@ -4,7 +4,7 @@ from django.urls import path
 urlpatterns = [
     path('create-post', views.create_post, name='creates a post'),
     path('read-post/<int:pk>', views.read_post, name='returns one post'),
-    path('read-posts', views.read_posts, name='returns first 20 posts'),
+    path('read-posts/<str:search_query>', views.read_posts, name='returns first 20 posts'),
     path('register', views.register_user, name='registers the user'),
     path('login', views.login_user, name="logins the user"),
     path('get-new-csrf', views.get_new_csrf, name="gets a csrf token"),
@@ -12,5 +12,5 @@ urlpatterns = [
     path('token-check', views.token_check, name="checks if the auth token is valid"),
     path('handle-post-interaction', views.handle_post_interaction, name="handles, likes, saves, reposts"),
     path('get-profile/<str:user>', views.get_profile, name="returns a user profile"),
-    path('get-image/<str:image_path>', views.get_image, name="gets an image from a database")
+    path('get-image/<str:media_path>', views.get_image, name="gets an image from a database")
 ]

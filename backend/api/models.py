@@ -5,7 +5,6 @@ from django.db.models import UniqueConstraint
 # Create your models here.
 
 class Post(models.Model):
-    title = models.CharField(max_length=30)
     text = models.TextField()
     pub_date = models.DateField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -58,6 +57,7 @@ class Image(models.Model):
     image_name = models.CharField(max_length=30)
     file_path = models.CharField(default="default_image.jpg", max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 class Country(models.Model):
     iso = models.CharField(max_length=2, null=False, unique=True)
