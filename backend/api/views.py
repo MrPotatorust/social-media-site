@@ -1,6 +1,4 @@
 from django.shortcuts import render
-from rest_framework import generics, status
-from rest_framework.response import Response
 from .models import Post, Likes, Saves, Reposts, UserMetaData
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -12,9 +10,13 @@ from django.utils import timezone
 
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
+from rest_framework import generics, status
+from rest_framework.response import Response
 
 from .custom_decorator import auth_check
 
+import os
+from dotenv import load_dotenv
 
 # Create your views here.
 
@@ -223,6 +225,20 @@ def get_image(request, media_path):
         open(search_path, 'rb'), 
         content_type='image/jpeg'
     )
+
+from django.core.mail import send_mail
+
+@api_view(['POST'])
+def send_email(request):
+    load_dotenv()
+    send_mail(
+    subject="Subject here",
+    message="Here is the message.",
+    from_email=os.getenv('DEFAULT_FROM_EMAIL'),
+    recipient_list=[os.getenv('DEFAULT_TO_EMAIL')],
+    fail_silently=False,
+)
+    return Response(status=status.HTTP_200_OK)
 
 
 # ! IF THE TOKEN IS INVALID THE LOGOUT HANDLING IS ON THE FRONTEND
