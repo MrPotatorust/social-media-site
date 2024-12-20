@@ -2,7 +2,7 @@ import { loginUser } from "./apiCalls.js";
 import { isLoggedIn } from "./auth.js";
 isLoggedIn();
 
-const loginForm = document.forms["loginForm"];
+const loginForm = document.forms["login-form"];
 const loginBtn = document.getElementById("login-btn");
 loginBtn.addEventListener("click", login);
 

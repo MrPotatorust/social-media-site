@@ -73,20 +73,29 @@ class UserMetaData(models.Model):
     language = models.CharField(max_length=13) # ! This has to be reworked with another model 
     private = models.BooleanField()
     profile_img = models.ForeignKey(Image, on_delete=models.CASCADE, default=1)
+    last_reset_email_sent = models.DateTimeField(auto_now_add=True)
     
 
     def __str__(self):
         return f"{self.user} {self.last_action} {self.email_verified} {self.language} {self.private}"
 
 
-class EmailAuthCode(models.Model):
+class EmailAuthToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    code = models.CharField(max_length=32)
+    token = models.CharField(max_length=32)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering=['created_at']
 
-class PasswordResetCode(models.Model):
+
+class PasswordResetToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    code = models.CharField(max_length=32)
+    token = models.CharField(max_length=32, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    def __str__(self):
+        return f"{self.user} {self.token} {self.created_at}"
+
+    class Meta:
+        ordering=['-created_at']

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Post, Likes, Saves, Reposts, UserMetaData
+from .models import Post, Likes, Saves, Reposts, UserMetaData, PasswordResetToken, EmailAuthToken
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from .serializers import PostSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer
@@ -7,6 +7,8 @@ from django.db.models import Count, Case, When, Value, IntegerField, F, Exists, 
 from django.middleware.csrf import get_token
 from datetime import timedelta
 from django.utils import timezone
+from django.core.mail import send_mail
+from django.utils.crypto import get_random_string
 
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
@@ -14,6 +16,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from .custom_decorator import auth_check
+from .custom_functions import send_email
 
 import os
 from dotenv import load_dotenv
@@ -226,10 +229,9 @@ def get_image(request, media_path):
         content_type='image/jpeg'
     )
 
-from django.core.mail import send_mail
 
 @api_view(['POST'])
-def send_email(request):
+def test_send_email(request):
     load_dotenv()
     send_mail(
     subject="Subject here",
@@ -238,6 +240,31 @@ def send_email(request):
     recipient_list=[os.getenv('DEFAULT_TO_EMAIL')],
     fail_silently=False,
 )
+    return Response(status=status.HTTP_200_OK)
+
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
+@api_view(['POST'])
+def reset_password(request):
+    email = request.data.get('email')
+    try:
+        user = User.objects.get(email=email)
+        last_sent_email_time = UserMetaData.objects.get(user=user).last_reset_email_sent
+        # print(last_sent_email_time)
+        latest_token_instance = PasswordResetToken.objects.filter(user=user).first()
+        if latest_token_instance:
+            print(timezone.now() - latest_token_instance.created_at, timedelta(minutes=30))
+            if (timezone.now() - latest_token_instance.created_at) < timedelta(minutes=30):
+                return Response('token is still valid',status=status.HTTP_200_OK)
+        token_generator = PasswordResetTokenGenerator()
+        generated_token = token_generator.make_token(user)
+        new_token = PasswordResetToken(user=user, token=generated_token)
+        new_token.save()
+        print(token_generator.check_token(user, "cict8e-a25044884edc5dd1683e2b8c1e9b53c3"))
+        send_email('Password Reset', f"{email}, {get_random_string(length=32)}")
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_200_OK)
+
     return Response(status=status.HTTP_200_OK)
 
 

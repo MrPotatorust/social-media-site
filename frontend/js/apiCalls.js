@@ -184,3 +184,22 @@ export async function getMedia(mediaPath) {
     return `Fetch of getProfile failed ${err}`;
   }
 }
+
+export async function resetPassword(email) {
+  const url = `http://127.0.0.1:8000/api/reset-password`;
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+      }),
+    });
+    return await response.json();
+  } catch (err) {
+    return `Fetch of getProfile failed ${err}`;
+  }
+}

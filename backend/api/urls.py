@@ -13,5 +13,6 @@ urlpatterns = [
     path('handle-post-interaction', views.handle_post_interaction, name="handles, likes, saves, reposts"),
     path('get-profile/<str:user>', views.get_profile, name="returns a user profile"),
     path('get-image/<str:media_path>', views.get_image, name="gets an image from a database"),
-    path('test-send-email', views.send_email, name="testing endpoint for sending emails")
+    path('test-send-email', views.send_email, name="testing endpoint for sending emails"),
+    path('reset-password', views.reset_password, name="resets password")
 ]

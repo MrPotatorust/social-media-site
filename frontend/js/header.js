@@ -6,6 +6,12 @@ import { isLoggedIn, logOut, tokenCheck } from "./auth.js";
 tokenCheck();
 isLoggedIn();
 
+const falseCondition =
+  localStorage.getItem("loggedIn") === "false" ||
+  localStorage.getItem("loggedIn") == null;
+
+const trueCondition = localStorage.getItem("loggedIn") === "true";
+
 const navElements = {
   home: {
     html: `<li><a class="align-center" href="../html/index.html">home</a></li>`,
@@ -22,7 +28,7 @@ const navElements = {
   register: {
     html: `<li class="align-right"><a href="../html/login.html">login</a></li>`,
     condition() {
-      return localStorage.getItem("loggedIn") === "false";
+      return falseCondition;
     },
   },
   profile: {
@@ -30,19 +36,19 @@ const navElements = {
       "username"
     )}" id="profile">profile</a></li>`,
     condition() {
-      return localStorage.getItem("loggedIn") === "true";
+      return trueCondition;
     },
   },
   reset: {
-    html: `<li class="align-center"><a href="../html/reset.html id="reset">reset password</a></li>`,
+    html: `<li class="align-center"><a href="../html/reset.html" id="reset">reset password</a></li>`,
     condition() {
-      return localStorage.getItem("loggedIn") === "false";
+      return falseCondition;
     },
   },
   logout: {
     html: `<li class="align-right"><a href="" id="logout-btn">Log out</a></li>`,
     condition() {
-      return localStorage.getItem("loggedIn") === "true";
+      return trueCondition;
     },
   },
 };
@@ -63,4 +69,6 @@ navEL.appendChild(navUl);
 
 const logoutBtn = document.getElementById("logout-btn");
 
-logoutBtn.addEventListener("click", logOut);
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", logOut);
+}
