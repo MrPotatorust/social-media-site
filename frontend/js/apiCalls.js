@@ -200,6 +200,46 @@ export async function resetPassword(email) {
     });
     return await response.json();
   } catch (err) {
-    return `Fetch of getProfile failed ${err}`;
+    return `Fetch of resetPassword failed ${err}`;
+
+  }
+}
+
+export async function submitNewPassword(password, token) {
+  const url = `http://127.0.0.1:8000/api/submit-password`;
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        password: password,
+        token: token,
+      }),
+    });
+    return await response.status;
+  } catch (err) {
+    return `Fetch of submitNewPassword failed ${err}`;
+  }
+}
+
+export async function resetPasswordLinkValidity(token) {
+  const url = `http://127.0.0.1:8000/api/reset-password-link-validity`;
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: token,
+      }),
+    });
+    return await response.status;
+  } catch (err) {
+    return `Fetch of resetPasswordLinkValidity failed ${err}`;
   }
 }

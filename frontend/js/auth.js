@@ -29,6 +29,10 @@ const routes = {
     auth: "false",
     loggedInRestriction: "false",
   },
+  "/password-change.html": {
+    auth: "false",
+    loggedInRestriction: "false",
+  },
 };
 
 export function isLoggedIn() {

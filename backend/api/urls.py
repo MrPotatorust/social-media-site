@@ -14,5 +14,7 @@ urlpatterns = [
     path('get-profile/<str:user>', views.get_profile, name="returns a user profile"),
     path('get-image/<str:media_path>', views.get_image, name="gets an image from a database"),
     path('test-send-email', views.send_email, name="testing endpoint for sending emails"),
-    path('reset-password', views.reset_password, name="resets password")
+    path('reset-password', views.reset_password_token, name="creates the password reset link"),
+    path('submit-password', views.reset_password_submit, name="changes the password"),
+    path('reset-password-link-validity', views.reset_password_link_validity, name="checks the validity of a link")
 ]

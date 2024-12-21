@@ -2,10 +2,9 @@ import { resetPassword } from "./apiCalls.js";
 
 const resetForm = document.forms["reset-form"];
 
-resetForm.addEventListener("submit", submitResetForm);
+resetForm.addEventListener("submit", submitEmailResetForm);
 
-function submitResetForm(e) {
-  console.log(resetForm["reset-email"].value);
+function submitEmailResetForm(e) {
   resetPassword(resetForm["reset-email"].value);
   e.preventDefault();
 }
