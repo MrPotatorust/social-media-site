@@ -201,7 +201,6 @@ export async function resetPassword(email) {
     return await response.json();
   } catch (err) {
     return `Fetch of resetPassword failed ${err}`;
-
   }
 }
 
@@ -241,5 +240,21 @@ export async function resetPasswordLinkValidity(token) {
     return await response.status;
   } catch (err) {
     return `Fetch of resetPasswordLinkValidity failed ${err}`;
+  }
+}
+
+export async function sendEmailVerification() {
+  const url = `http://127.0.0.1:8000/api/reset-password-link-validity`;
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return await response.status;
+  } catch (err) {
+    return `Fetch of sendEmailVerification failed ${err}`;
   }
 }

@@ -9,6 +9,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
@@ -242,7 +243,6 @@ def test_send_email(request):
 )
     return Response(status=status.HTTP_200_OK)
 
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 # ! REWORK THIS make it more readable
 # ! REWORK THIS add timeout for new password every 30 minutes, minimum requirements for password 
@@ -265,7 +265,7 @@ def reset_password_token(request):
         # ? if the token is still valid send an email with it
         if latest_token:
             if (timezone.now() - latest_token.created_at) < timedelta(minutes=30) and token_generator.check_token(user, latest_token.token):
-                send_email('Password Reset', f"{email}, http://127.0.0.1:5500/frontend/html/password-change.html?token={latest_token.token}")
+                send_email('Password Reset', f"{email}, http://127.0.0.1:5501/frontend/html/password-change.html?token={latest_token.token}")
                 return Response(status=status.HTTP_200_OK)
                 # return Response('sent another email',status=status.HTTP_200_OK)
         
@@ -273,7 +273,7 @@ def reset_password_token(request):
         generated_token = token_generator.make_token(user)
         new_token = PasswordResetToken(user=user, token=generated_token)
         new_token.save()
-        send_email('Password Reset', f"{email}, http://127.0.0.1:5500/frontend/html/password-change.html?token={generated_token}")
+        send_email('Password Reset', f"{email}, http://127.0.0.1:5501/frontend/html/password-change.html?token={generated_token}")
     except User.DoesNotExist:
         return Response(status=status.HTTP_200_OK)
     except Exception as e:
@@ -300,17 +300,30 @@ def reset_password_submit(request):
 @api_view(['POST'])
 def reset_password_link_validity(request):
     token = request.data.get('token')
-    password_reset_object = PasswordResetToken.objects.get(token=token)
-    user = password_reset_object.user
     token_generator = PasswordResetTokenGenerator()
 
     try:
+        password_reset_object = PasswordResetToken.objects.get(token=token)
+        user = password_reset_object.user
         PasswordResetToken.objects.get(token=token)
         if (timezone.now() - password_reset_object.created_at) > timedelta(minutes=30) or token_generator.check_token(user, token) == False:
             return Response('The link is no longer valid', status=status.HTTP_400_BAD_REQUEST)
     except:
         return Response('The link is no longer valid', status=status.HTTP_400_BAD_REQUEST)
     return Response(status=status.HTTP_200_OK)
+
+# @auth_check
+@api_view(['POST'])
+def send_email_verification(request):
+    try:
+        user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
+
+        send_email('email verification', f'click this link to get verified: http://127.0.0.1:5501/frontend/html/email-verification.html?token=test')
+
+        return Response(status=status.HTTP_200_OK)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 # ! IF THE TOKEN IS INVALID THE LOGOUT HANDLING IS ON THE FRONTEND
 @api_view(['POST'])
