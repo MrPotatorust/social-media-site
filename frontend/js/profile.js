@@ -1,4 +1,4 @@
-import { getProfile, getMedia } from "./apiCalls.js";
+import { getProfile, getMedia, sendEmailVerification } from "./apiCalls.js";
 
 let params = new URLSearchParams(location.search);
 
@@ -30,5 +30,17 @@ async function profileGet() {
 
   document.querySelector("div.container").innerHTML = profileElInnerHtml;
 }
+
+
+//! REWORK temporary email verification button
+
+const verificationBtn = document.getElementById("email-verification-btn")
+verificationBtn.addEventListener("click", emailClickEvent)
+
+async function emailClickEvent(){
+  console.log( await sendEmailVerification())
+}
+
+
 
 profileGet();

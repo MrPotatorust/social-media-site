@@ -244,7 +244,7 @@ export async function resetPasswordLinkValidity(token) {
 }
 
 export async function sendEmailVerification() {
-  const url = `http://127.0.0.1:8000/api/reset-password-link-validity`;
+  const url = `http://127.0.0.1:8000/api/send-email-verification`;
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -256,5 +256,24 @@ export async function sendEmailVerification() {
     return await response.status;
   } catch (err) {
     return `Fetch of sendEmailVerification failed ${err}`;
+  }
+}
+
+export async function emailVerificationLinkValidity(token) {
+  const url = `http://127.0.0.1:8000/api/reset-password-link-validity`;
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: token,
+      }),
+    });
+    return await response.status;
+  } catch (err) {
+    return `Fetch of emailVerificationLinkValidity failed ${err}`;
   }
 }

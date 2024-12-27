@@ -39,12 +39,6 @@ const navElements = {
       return trueCondition;
     },
   },
-  reset: {
-    html: `<li class="align-center"><a href="../html/reset.html" id="reset">reset password</a></li>`,
-    condition() {
-      return falseCondition;
-    },
-  },
   logout: {
     html: `<li class="align-right"><a href="" id="logout-btn">Log out</a></li>`,
     condition() {

@@ -246,6 +246,7 @@ def test_send_email(request):
 
 # ! REWORK THIS make it more readable
 # ! REWORK THIS add timeout for new password every 30 minutes, minimum requirements for password 
+# found out that token time checking is already implemented in "PasswordResetTokenGenerator"
 
 @api_view(['POST'])
 def reset_password_token(request):
@@ -297,6 +298,8 @@ def reset_password_submit(request):
         user.save()
     return Response(status=status.HTTP_200_OK)
 
+# ! REWORK this token generation is very flawed because it generates very simple tokens, rework should resemble django "PasswordResetTokenGenerator"
+
 @api_view(['POST'])
 def reset_password_link_validity(request):
     token = request.data.get('token')
@@ -305,24 +308,34 @@ def reset_password_link_validity(request):
     try:
         password_reset_object = PasswordResetToken.objects.get(token=token)
         user = password_reset_object.user
-        PasswordResetToken.objects.get(token=token)
         if (timezone.now() - password_reset_object.created_at) > timedelta(minutes=30) or token_generator.check_token(user, token) == False:
             return Response('The link is no longer valid', status=status.HTTP_400_BAD_REQUEST)
     except:
         return Response('The link is no longer valid', status=status.HTTP_400_BAD_REQUEST)
     return Response(status=status.HTTP_200_OK)
 
-# @auth_check
+@auth_check
 @api_view(['POST'])
 def send_email_verification(request):
     try:
         user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
 
-        send_email('email verification', f'click this link to get verified: http://127.0.0.1:5501/frontend/html/email-verification.html?token=test')
+        new_token = get_random_string(32)
+
+        #if this is true it will throw an error because the token already exists, so it prevents duplicate tokens
+        EmailAuthToken.objects.get(new_token)
+
+
+        send_email('email verification', f'click this link to get verified: http://127.0.0.1:5501/frontend/html/email-verification.html?token={new_token}')
 
         return Response(status=status.HTTP_200_OK)
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+def email_link_validity(request):
+    token = request.data.get('token')
+    return Response(status=status.HTTP_200_OK)
+
 
 
 # ! IF THE TOKEN IS INVALID THE LOGOUT HANDLING IS ON THE FRONTEND

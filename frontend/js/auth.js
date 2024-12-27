@@ -1,6 +1,6 @@
 import { logOutApi, tokenCheckApi } from "./apiCalls.js";
 
-//? "auth" lets you access the link if you are logged in 
+//? "auth" lets you access the link if you are logged in
 //? "loggedInRestriction" redirects users that are logged in to main page
 
 const routes = {
@@ -36,8 +36,8 @@ const routes = {
     auth: "false",
     loggedInRestriction: "false",
   },
-  "/email-verification": {
-    auth: "false",
+  "/email-verification.html": {
+    auth: "true",
     loggedInRestriction: "false",
   },
 };
