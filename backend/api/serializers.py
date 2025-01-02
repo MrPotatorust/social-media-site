@@ -26,11 +26,6 @@ class CreatePostSerializer(serializers.ModelSerializer):
         fields = ['text', 'author']
 
 
-class UserRegisterSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = User
-        fields = '__all__'
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -47,6 +42,19 @@ class UserMetaDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserMetaData
         fields = '__all__'
+class UserRegisterSerializer(serializers.ModelSerializer):
+    
+    usermetadata = UserMetaDataSerializer(required=False)
+
+    class Meta:
+        model = User
+        fields = '__all__'
+
+    def create(self, validated_data):
+        print(validated_data)
+        user = User.objects.create(**validated_data)
+        UserMetaData.objects.create(user=user)
+        return user
 
 # class ProfileSerializer(serializers.ModelSerializer):
 

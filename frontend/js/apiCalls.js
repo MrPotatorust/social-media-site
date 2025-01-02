@@ -186,7 +186,7 @@ export async function getMedia(mediaPath) {
 }
 
 export async function resetPassword(email) {
-  const url = `http://127.0.0.1:8000/api/reset-password`;
+  const url = `http://127.0.0.1:8000/api/send-reset-password`;
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -260,7 +260,7 @@ export async function sendEmailVerification() {
 }
 
 export async function emailVerificationLinkValidity(token) {
-  const url = `http://127.0.0.1:8000/api/reset-password-link-validity`;
+  const url = `http://127.0.0.1:8000/api/email-verification-link-validity`;
   try {
     const response = await fetch(url, {
       method: "POST",

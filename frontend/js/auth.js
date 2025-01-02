@@ -37,7 +37,7 @@ const routes = {
     loggedInRestriction: "false",
   },
   "/email-verification.html": {
-    auth: "true",
+    auth: "false",
     loggedInRestriction: "false",
   },
 };

@@ -66,12 +66,12 @@ class Country(models.Model):
 
 class UserMetaData(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    last_action = models.DateTimeField()
+    last_action = models.DateTimeField(auto_now_add=True)
     email_verified = models.BooleanField(default=False)
     description = models.CharField(max_length=120)
     country = models.ForeignKey(Country, on_delete=models.CASCADE, default=2)
     language = models.CharField(max_length=13) # ! This has to be reworked with another model 
-    private = models.BooleanField()
+    private = models.BooleanField(default=True)
     profile_img = models.ForeignKey(Image, on_delete=models.CASCADE, default=1)
     last_reset_email_sent = models.DateTimeField(auto_now_add=True)
     
