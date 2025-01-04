@@ -17,21 +17,9 @@ def auth_check(func):
             if not auth_token:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-            token = Token.objects.get(key=auth_token)
+            Token.objects.get(key=auth_token)
             
-            if request.method == 'POST':
-
-                token_username = token.user.username
-                request_username = request.data['username']
-
-                if token and token_username == request_username:
-                    return func(request, *args, **kwargs)
-                
-                return Response(status=status.HTTP_401_UNAUTHORIZED)
-            elif request.method == 'GET':
-                return func(request, *args, **kwargs)
-            else:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+            return func(request, *args, **kwargs)
         except Exception as e:
             print(e)
             return Response(status=status.HTTP_401_UNAUTHORIZED)

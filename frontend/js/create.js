@@ -27,10 +27,14 @@ function validateForm() {
     form.appendChild(alertP);
   } else {
     postText.classList.remove("red-border");
-    const username = localStorage.getItem("username");
     const test = async () => {
-      console.log(await createPost(postText.value, username));
-      window.location.replace("/frontend/html/read.html");
+      const response = await createPost(postText.value);
+      console.log(response);
+      if (response === 201) {
+        window.location.replace("/frontend/html/read.html");
+      } else {
+        console.log("something went wrong", response);
+      }
     };
 
     test();

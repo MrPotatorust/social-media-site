@@ -18,7 +18,7 @@ export async function readPosts(searchQuery) {
   }
 }
 
-export async function createPost(text, author) {
+export async function createPost(text) {
   const url = "http://127.0.0.1:8000/api/create-post";
   try {
     const response = await fetch(url, {
@@ -30,10 +30,9 @@ export async function createPost(text, author) {
       },
       body: JSON.stringify({
         text: text,
-        username: author,
       }),
     });
-    return await response.json();
+    return await response.status;
   } catch (err) {
     return `Fetch of createPost failed ${err}`;
   }
@@ -60,7 +59,6 @@ export async function registerUser(formData) {
 
 export async function loginUser(formData) {
   const url = "http://127.0.0.1:8000/api/login";
-  // let csrfToken = await getNewCsrf()
 
   try {
     const response = await fetch(url, {
@@ -69,7 +67,6 @@ export async function loginUser(formData) {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        "X-CSRFToken": "",
       },
       body: JSON.stringify({
         ...formData,
@@ -82,14 +79,14 @@ export async function loginUser(formData) {
   }
 }
 
-// Currently not in use
+//? Currently not in use
 export async function getNewCsrf() {
   const url = "http://127.0.0.1:8000/api/get-new-csrf";
 
   try {
     const response = await fetch(url, {
-      credentials: "include", // Important for cookies
-      method: "GET", // Explicitly set method
+      credentials: "include",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
@@ -105,8 +102,8 @@ export async function logOutApi() {
 
   try {
     const response = await fetch(url, {
-      credentials: "include", // Important for cookies
-      method: "DELETE", // Explicitly set method
+      credentials: "include",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
@@ -122,14 +119,11 @@ export async function tokenCheckApi() {
 
   try {
     const response = await fetch(url, {
-      credentials: "include", // Important for cookies
-      method: "POST", // Explicitly set method
+      credentials: "include",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        username: localStorage.getItem("username"),
-      }),
     });
     return response.status;
   } catch (err) {
@@ -142,14 +136,13 @@ export async function postBtnInteraction(postId, action) {
 
   try {
     const response = await fetch(url, {
-      credentials: "include", // Important for cookies
-      method: "POST", // Explicitly set method
+      credentials: "include",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         post_id: postId,
-        username: localStorage.getItem("username"),
         action: action,
       }),
     });

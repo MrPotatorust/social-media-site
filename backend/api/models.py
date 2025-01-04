@@ -4,6 +4,7 @@ from django.db.models import UniqueConstraint
 
 # Create your models here.
 
+
 class Post(models.Model):
     text = models.TextField()
     pub_date = models.DateField(auto_now_add=True)
@@ -12,6 +13,13 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+class Hashtags(models.Model):
+    tag = models.CharField(max_length=32)
+    created_at = models.DateField(auto_now_add=True)
+
+class PostHashtags(models.Model):
+    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    hashtag_id = models.ForeignKey(Hashtags, on_delete=models.CASCADE)
 
 class Likes(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

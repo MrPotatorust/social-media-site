@@ -45,24 +45,30 @@ from dotenv import load_dotenv
 @api_view(['POST'])
 @auth_check
 def create_post(request):
+    try:
 
-    post_data = {
-        "text":request.data["text"],
-        "author": User.objects.get(username=request.data["username"]).id
-    }
+        post_data = {
+            "text":request.data["text"],
+            "author": Token.objects.get(key=request.COOKIES.get("auth_token")).user.id
+        }
 
 
-    serializer = CreatePostSerializer(data=post_data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer = CreatePostSerializer(data=post_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
 def read_post(request, pk):
-    queryset = Post.objects.filter(id=pk)
-    return Response(PostSerializer(queryset).data)
+    try:
+        queryset = Post.objects.filter(id=pk)
+        return Response(PostSerializer(queryset).data)
+    except:
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # ! I have to add exception when the user is not logged in because this will throw an error
@@ -296,14 +302,15 @@ def reset_password_link_validity(request):
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# @auth_check
+@auth_check
 @api_view(['POST'])
 def send_email_verification(request):
+
     try:
         user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
         manager = ResetVerificationTokenManager(EmailVerificationTokenGenerator, EmailAuthToken)
         response = manager.send_token(user, "email_verification", "email-verification.html", 5, 120, False)
-        return Response(status=status.HTTP_200_OK)
+        return response
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
