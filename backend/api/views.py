@@ -114,27 +114,30 @@ def register_user(request):
 
 @api_view(['POST'])
 def login_user(request):
-    username = request.data['username']
-    password = request.data['password']
 
-    print(User.objects.get(username=username).is_active)
-    user = authenticate(username=username, password=password)
-    if user:
-        token, created = Token.objects.get_or_create(user=user)
-        response = Response(status=status.HTTP_200_OK)
-        response.set_cookie(
-            key='auth_token', 
-            value=token.key,  # Assuming you're using token authentication
-            expires=timezone.now() + timedelta(days=30),
-            httponly=True,  # Crucial for HTTP-only
-            secure=False,    # Only sent over HTTPS
-            path="/",
-            samesite='strict'  # Prevents CSRF
-        )
+    try:
+        username = request.data['username']
+        password = request.data['password']
 
-        return response
-    return Response(status=status.HTTP_401_UNAUTHORIZED)
+        print(User.objects.get(username=username).is_active)
+        user = authenticate(username=username, password=password)
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            response = Response(status=status.HTTP_200_OK)
+            response.set_cookie(
+                key='auth_token', 
+                value=token.key,  # Assuming you're using token authentication
+                expires=timezone.now() + timedelta(days=30),
+                httponly=True,  # Crucial for HTTP-only
+                secure=False,    # Only sent over HTTPS
+                path="/",
+                samesite='strict'  # Prevents CSRF
+            )
 
+            return response
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    except:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 #? currently not in use
 @api_view(['GET'])
 def get_new_csrf(request):
