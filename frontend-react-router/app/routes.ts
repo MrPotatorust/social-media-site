@@ -5,7 +5,11 @@ import {
   route,
 } from "@react-router/dev/routes";
 
-export default [
-  index("routes/home.tsx"),
-  layout("layout/authWrapper.tsx", [route("login", "routes/login.tsx")]),
-] satisfies RouteConfig;
+const exportRoutes = [
+  layout("layout/authWrapper.tsx", [
+    index("routes/home.tsx"),
+    route("login", "routes/login.tsx"),
+  ]),
+];
+
+export default exportRoutes satisfies RouteConfig;
