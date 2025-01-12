@@ -2,12 +2,12 @@ import {
   Outlet,
   redirect,
   useNavigation,
+  useSubmit,
   type NavigateFunction,
+  type SubmitTarget,
 } from "react-router";
 import type { Route } from "./+types/authWrapper";
-import { useState } from "react";
-import { loginApi } from "~/apiCalls";
-import { useNavigate } from "react-router";
+import React, { useState } from "react";
 import type { routeAuthType } from "~/types";
 
 export default function AuthWrapper() {
@@ -15,7 +15,10 @@ export default function AuthWrapper() {
     name: localStorage.getItem("username"),
     isAuthenticated:
       localStorage.getItem("isAuthenticated") == "true" ? true : false,
+    role: "admin",
   });
+
+  const submit = useSubmit();
 
   function login(username: string) {
     setUser({ ...user, name: username, isAuthenticated: true });
@@ -25,15 +28,23 @@ export default function AuthWrapper() {
   }
 
   function logout() {
-    setUser({ ...user, isAuthenticated: false });
+    submit({ action: "logout" }, { method: "post", action: "/" });
+    // setUser({ ...user, isAuthenticated: false });
+    // localStorage.setItem("username", "");
+    // localStorage.setItem("isAuthenticated", "false");
   }
 
-  function routePrivacy(routeAuth: routeAuthType, navigate: NavigateFunction) {
+  function routePrivacy(
+    routeAuth: routeAuthType,
+    navigate: NavigateFunction | null
+  ) {
     if (
       (user.isAuthenticated && !routeAuth.showAuthenticated) ||
       (!user.isAuthenticated && routeAuth.isPrivate)
     ) {
-      navigate("/");
+      if (navigate) {
+        navigate("/");
+      }
       return true;
     }
     return false;

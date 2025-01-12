@@ -9,6 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
+import { api } from "./apiCalls";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -24,6 +25,15 @@ export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
 
+export async function clientAction({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+  const action = formData.get("action");
+
+  if (action === "logout") {
+    api.logout();
+  }
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -33,7 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="h-screen">
         {children}
         <ScrollRestoration />
         <Scripts />

@@ -5,18 +5,18 @@ import {
   useNavigation,
   useOutletContext,
 } from "react-router";
-import { useContext, useEffect } from "react";
-import type { Route } from "../+types/root";
-import ButtonTest from "~/components/buttonTest";
+import type { Route } from "./+types/login";
 import type { OutletContextType } from "~/types";
-import { loginApi } from "~/apiCalls";
+import { api } from "~/apiCalls";
+import { routeList } from "~/routeList";
+import { useEffect } from "react";
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const formData = await request.formData();
 
   const username = formData.get("username");
   const password = formData.get("password");
-  const result = await loginApi(formData);
+  const result = await api.login(formData);
   if (result === 200) {
     return { state: true, username: formData.get("username") };
   } else {
@@ -25,12 +25,7 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 }
 
 export default function Login() {
-  const { user, login, routePrivacy } = useOutletContext<OutletContextType>();
-
-  const routeAuth = {
-    isPrivate: true,
-    showAuthenticated: false,
-  };
+  const { login, routePrivacy } = useOutletContext<OutletContextType>();
 
   const navigate = useNavigate();
   const navigation = useNavigation();
@@ -41,7 +36,7 @@ export default function Login() {
   let data = fetcher?.data;
 
   useEffect(() => {
-    routePrivacy(routeAuth, navigate);
+    routePrivacy(routeList.Login.routeAuth, navigate);
     if (data?.state && data?.username) {
       login(data.username);
       navigate("/");

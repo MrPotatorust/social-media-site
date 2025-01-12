@@ -14,3 +14,11 @@ export interface routeAuthType {
   isPrivate: boolean;
   showAuthenticated: boolean;
 }
+
+export interface routeListType {
+  [key: string]: {
+    routeAuth: routeAuthType;
+    path: string | null;
+    file: string;
+  };
+}
