@@ -129,9 +129,9 @@ def login_user(request):
                 value=token.key,  # Assuming you're using token authentication
                 expires=timezone.now() + timedelta(days=30),
                 httponly=True,  # Crucial for HTTP-only
-                secure=False,    # Only sent over HTTPS
+                secure=True,    # Only sent over HTTPS
                 path="/",
-                samesite='strict'  # Prevents CSRF
+                samesite='none'  # Prevents CSRF
             )
 
             return response
@@ -151,20 +151,12 @@ def logout_user(request):
 
     auth_token = request.COOKIES.get("auth_token")
     try:
-        token_instance = Token.objects.get(key=auth_token)
+        Token.objects.get(key=auth_token)
+        response = Response(status=status.HTTP_204_NO_CONTENT)
+        response.delete_cookie("auth_token")
+        return response
     except:
-        token_instance = None
-    if token_instance:
-        try:
-            response = Response(status=status.HTTP_204_NO_CONTENT)
-            response.delete_cookie("auth_token")
-            return response
-        except:
-            response = Response(status=status.HTTP_400_BAD_REQUEST)
-            response.delete_cookie("auth_token")
-            return response
-    
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @auth_check

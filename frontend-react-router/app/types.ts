@@ -7,18 +7,31 @@ export interface OutletContextType {
   >;
   login: (userName: string) => void;
   logout: () => void;
-  routePrivacy: (routeAuth: routeAuthType, navigate: NavigateFunction) => void;
+  routePrivacy: (routeAuth: RouteAuthType, navigate: NavigateFunction) => void;
 }
 
-export interface routeAuthType {
+export interface RouteAuthType {
   isPrivate: boolean;
   showAuthenticated: boolean;
 }
 
-export interface routeListType {
+export interface RouteListType {
   [key: string]: {
-    routeAuth: routeAuthType;
+    routeAuth: RouteAuthType;
     path: string | null;
     file: string;
   };
+}
+
+export interface postProps {
+  id: number;
+  author: string;
+  text: string;
+  likes: number;
+  reposts: number;
+  saves: number;
+  like: boolean;
+  saved: boolean;
+  reposted: boolean;
+  pubDate: Date;
 }

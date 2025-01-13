@@ -68,7 +68,7 @@ class TestingUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'last_login', 'date_joined']
+        fields = ['username', 'date_joined']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -79,4 +79,4 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserMetaData
-        fields = '__all__'
+        fields = ['country', 'description', 'email_verified', 'language', 'profile_img', 'user']

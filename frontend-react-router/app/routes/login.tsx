@@ -37,6 +37,7 @@ export default function Login() {
 
   useEffect(() => {
     routePrivacy(routeList.Login.routeAuth, navigate);
+
     if (data?.state && data?.username) {
       login(data.username);
       navigate("/");
@@ -49,6 +50,7 @@ export default function Login() {
         <fetcher.Form
           method="post"
           className="grid grid-cols-6 grid-rows-6 size-96 place-items-center"
+          action="/login"
         >
           <h2 className="col-span-6">Login</h2>
           <input

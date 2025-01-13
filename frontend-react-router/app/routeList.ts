@@ -1,6 +1,6 @@
-import type { routeListType } from "./types";
+import type { RouteListType } from "./types";
 
-export const routeList = <routeListType>{
+export const routeList = <RouteListType>{
   Home: {
     routeAuth: {
       isPrivate: false,

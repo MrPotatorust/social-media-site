@@ -35,4 +35,54 @@ export class api {
       return `Fetch of logout failed ${err}`;
     }
   }
+
+  static async tokenCheck() {
+    const url = `${api.baseUrl}/token-check`;
+
+    try {
+      const response = await fetch(url, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response.status;
+    } catch (err) {
+      return `Fetch of tokenCheckApi failed ${err}`;
+    }
+  }
+
+  static async postBtnInteraction(postId: number, action: string) {
+    const url = `${api.baseUrl}/handle-post-interaction`;
+
+    try {
+      const response = await fetch(url, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          post_id: postId,
+          action: action,
+        }),
+      });
+      return await response.status;
+    } catch (err) {
+      return `Fetch of postBtn failed ${err}`;
+    }
+  }
+  static async getProfile(user: string) {
+    const url = `${this.baseUrl}/get-profile/${user}`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
+      return await response.json();
+    } catch (err) {
+      return `Fetch of getProfile failed ${err}`;
+    }
+  }
 }

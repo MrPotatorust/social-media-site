@@ -1,4 +1,6 @@
+import { api } from "~/apiCalls";
 import type { Route } from "./+types/home";
+import { Form } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,5 +14,9 @@ export async function clientAction(request: Route.ActionArgs) {
 }
 
 export default function Home() {
-  return <h1>Hello</h1>;
+  return (
+    <>
+      <h1>Hello</h1>
+    </>
+  );
 }

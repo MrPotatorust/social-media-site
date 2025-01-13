@@ -25,13 +25,23 @@ export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
 
+export async function clientLoader(params: Route.LoaderArgs) {
+  const res = await api.tokenCheck();
+  console.log(`token checked and it is: ${res === 202 ? "valid" : "invalid"}`);
+}
+
 export async function clientAction({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const action = formData.get("action");
 
   if (action === "logout") {
-    api.logout();
+    const response = await api.logout();
+    if (response === 204 || response === 400) {
+      return true;
+    }
+    return false;
   }
+  return "undefined function";
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {

@@ -1,14 +1,15 @@
 import {
   Outlet,
   redirect,
+  useFetcher,
   useNavigation,
   useSubmit,
+  type FetcherWithComponents,
   type NavigateFunction,
   type SubmitTarget,
 } from "react-router";
-import type { Route } from "./+types/authWrapper";
-import React, { useState } from "react";
-import type { routeAuthType } from "~/types";
+import React, { useEffect, useState } from "react";
+import type { RouteAuthType } from "~/types";
 
 export default function AuthWrapper() {
   const [user, setUser] = useState({
@@ -19,6 +20,7 @@ export default function AuthWrapper() {
   });
 
   const submit = useSubmit();
+  const logoutFetcher = useFetcher();
 
   function login(username: string) {
     setUser({ ...user, name: username, isAuthenticated: true });
@@ -27,15 +29,20 @@ export default function AuthWrapper() {
     return true;
   }
 
-  function logout() {
-    submit({ action: "logout" }, { method: "post", action: "/" });
-    // setUser({ ...user, isAuthenticated: false });
-    // localStorage.setItem("username", "");
-    // localStorage.setItem("isAuthenticated", "false");
+  async function logout() {
+    logoutFetcher.submit({ action: "logout" }, { method: "post", action: "/" });
   }
 
+  useEffect(() => {
+    if (logoutFetcher.data === true) {
+      setUser((user) => ({ ...user, isAuthenticated: false }));
+      localStorage.setItem("username", "");
+      localStorage.setItem("isAuthenticated", "false");
+    }
+  }, [logoutFetcher.data]);
+
   function routePrivacy(
-    routeAuth: routeAuthType,
+    routeAuth: RouteAuthType,
     navigate: NavigateFunction | null
   ) {
     if (
