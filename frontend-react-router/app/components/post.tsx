@@ -1,14 +1,22 @@
 import { Link } from "react-router";
-import type { postProps } from "~/types";
+import type { postType } from "~/types";
 
-export default function Post(props: postProps) {
+export default function Post(props: postType) {
+  const post = props.postData;
+  const profileLink = `profile/${post.author}`;
+
   return (
-    <div key={props.id}>
-      <p>{props.text}</p>
+    <div className="space-y-1.5 max-w-7xl">
+      <p className="text-wrap">{post.text}</p>
       <p>
-        <span>Likes: {props.likes}</span>
-        <span>Reposts: {props.reposts}</span>
-        <span>Saves: {props.saves}</span>
+        <span>Likes: {post.likes}</span>
+        <span>Reposts: {post.reposts}</span>
+        <span>Saves: {post.saves}</span>
+        <span>
+          <Link to={profileLink}>
+            {post.author}, {post.pub_date}
+          </Link>
+        </span>
         <Link to="profile"></Link>
       </p>
     </div>

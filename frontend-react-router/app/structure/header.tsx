@@ -17,6 +17,9 @@ export default function Header() {
     <nav className="flex flex-row">
       <ul className="flex flex-row">
         <li className="m-2">
+          <Link to="">Home</Link>
+        </li>
+        <li className="m-2">
           {isAuth && <Link to={profileLink}>Profile</Link>}
         </li>
         <li className="m-2">{!isAuth && <Link to="login">Login</Link>}</li>

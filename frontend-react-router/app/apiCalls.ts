@@ -85,4 +85,24 @@ export class api {
       return `Fetch of getProfile failed ${err}`;
     }
   }
+
+  static async getPosts(searchQuery?: string) {
+    let modifiedSearchQuery;
+
+    if (searchQuery) {
+      modifiedSearchQuery = searchQuery;
+    } else {
+      modifiedSearchQuery = "null";
+    }
+    const url = `${api.baseUrl}/read-posts/${modifiedSearchQuery}`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
+      return response.json();
+    } catch (err) {
+      return `Fetch of readPosts failed ${err}`;
+    }
+  }
 }

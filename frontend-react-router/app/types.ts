@@ -23,15 +23,18 @@ export interface RouteListType {
   };
 }
 
-export interface postProps {
+export interface postData {
   id: number;
   author: string;
   text: string;
   likes: number;
   reposts: number;
   saves: number;
-  like: boolean;
+  liked: boolean;
   saved: boolean;
   reposted: boolean;
-  pubDate: Date;
+  pub_date: string;
+}
+export interface postType {
+  postData: postData;
 }
