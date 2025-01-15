@@ -27,12 +27,14 @@ export interface postData {
   id: number;
   author: string;
   text: string;
-  likes: number;
-  reposts: number;
-  saves: number;
+  like_count: number;
+  dislike_count: number;
+  repost_count: number;
+  save_count: number;
   liked: boolean;
   saved: boolean;
   reposted: boolean;
+  disliked: boolean;
   pub_date: string;
 }
 export interface postType {

@@ -6,16 +6,18 @@ from django.contrib.auth.models import User
 class PostSerializer(serializers.ModelSerializer):
 
     author = serializers.CharField()
-    likes_count = serializers.IntegerField()
-    reposts_count = serializers.IntegerField()
-    saves_count = serializers.IntegerField()
+    like_count = serializers.IntegerField()
+    repost_count = serializers.IntegerField()
+    save_count = serializers.IntegerField()
+    dislike_count = serializers.IntegerField()
     liked = serializers.BooleanField()
     saved = serializers.BooleanField()
     reposted = serializers.BooleanField()
+    disliked = serializers.BooleanField()
 
     class Meta:
         model = Post
-        fields = ['id', 'text', 'pub_date', 'author', 'likes_count', 'saves_count', 'reposts_count', 'liked', 'saved', 'reposted']
+        fields = ['id', 'text', 'pub_date', 'author', 'like_count', 'save_count', 'repost_count', 'dislike_count', 'liked', 'saved', 'reposted', 'disliked']
 
 
 

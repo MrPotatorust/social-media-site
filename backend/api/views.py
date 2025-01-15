@@ -80,17 +80,20 @@ def read_posts(request, search_query):
     except:
         return Response("failed to get an object instance", status=status.HTTP_400_BAD_REQUEST)
 
-    likes = Likes.objects.all().filter(user_id=user, post_id=OuterRef('pk'))
-    saves = Saves.objects.all().filter(user_id=user, post_id=OuterRef('pk'))
-    reposts = Reposts.objects.all().filter(user_id=user, post_id=OuterRef('pk'))
+    likes = Likes.objects.filter(user_id=user, post_id=OuterRef('pk'))
+    saves = Saves.objects.filter(user_id=user, post_id=OuterRef('pk'))
+    reposts = Reposts.objects.filter(user_id=user, post_id=OuterRef('pk'))
+    dislikes = Reposts.objects.filter(user_id=user, post_id=OuterRef('pk'))
 
     base_queryset = Post.objects.annotate(
-        likes_count = Count("likes"), 
-        saves_count = Count("saves"),
-        reposts_count = Count("reposts"),
+        like_count = Count("likes"), 
+        save_count = Count("saves"),
+        repost_count = Count("reposts"),
+        dislike_count = Count("dislikes"),
         liked = Exists(likes),
         saved = Exists(saves),
-        reposted = Exists(reposts))
+        reposted = Exists(reposts),
+        disliked = Exists(dislikes))
 
     if search_query != 'null':
         queryset = base_queryset.filter(text__contains = search_query)[0:20]

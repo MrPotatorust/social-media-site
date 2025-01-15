@@ -59,6 +59,17 @@ class Reposts(models.Model):
             models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-reposts")
         ]
 
+class Dislikes(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
+
+    class Meta:
+
+        constraints=[
+            models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-dislikes")
+        ]
+
 
 class Image(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
