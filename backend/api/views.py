@@ -83,7 +83,7 @@ def read_posts(request, search_query):
     likes = Likes.objects.filter(user_id=user, post_id=OuterRef('pk'))
     saves = Saves.objects.filter(user_id=user, post_id=OuterRef('pk'))
     reposts = Reposts.objects.filter(user_id=user, post_id=OuterRef('pk'))
-    dislikes = Reposts.objects.filter(user_id=user, post_id=OuterRef('pk'))
+    dislikes = Dislikes.objects.filter(user_id=user, post_id=OuterRef('pk'))
 
     base_queryset = Post.objects.annotate(
         like_count = Count("likes"), 
@@ -91,9 +91,9 @@ def read_posts(request, search_query):
         repost_count = Count("reposts"),
         dislike_count = Count("dislikes"),
         liked = Exists(likes),
+        disliked = Exists(dislikes),
         saved = Exists(saves),
-        reposted = Exists(reposts),
-        disliked = Exists(dislikes))
+        reposted = Exists(reposts))
     
 
     if search_query != 'null':
@@ -101,6 +101,8 @@ def read_posts(request, search_query):
     else:
         queryset = base_queryset[0:20]
     serializer = PostSerializer(queryset, many=True).data
+
+    # print(serializer)
 
     return Response(serializer, status=status.HTTP_200_OK)
 
@@ -165,13 +167,8 @@ def logout_user(request):
 @api_view(['POST'])
 @auth_check
 def handle_post_interaction(request):
-    
-
-
     data = request.data
     data_action = data['action']
-    like_model = Likes
-    dislike_model = Dislikes
     
     
     try:
@@ -181,30 +178,19 @@ def handle_post_interaction(request):
         return Response("failed to get an user/post object instance", status=status.HTTP_400_BAD_REQUEST)
 
     if data_action == 'like':
-        model = like_model
-        # try:
-        #     if(like_model.objects.filter(user_id=user, post_id=post).first()):
-        #         dislike_model.objects.get(user_id=user, post_id=post).delete()
-        # except:
-        #     pass
-
+        model = Likes
+        if Dislikes.objects.filter(user_id=user, post_id=post).first():
+            Dislikes.objects.get(user_id=user, post_id=post).delete()
     elif data_action == "dislike":
-        model = dislike_model
-        # try:
-        #     like_model.objects.get(user_id=user, post_id=post).delete()
-        #     dislike_model.objects.get(user_id=user, post_id=post).delete()
-        # except:
-        #     pass
+        model = Dislikes
+        if Likes.objects.filter(user_id=user, post_id=post).first():
+            Likes.objects.get(user_id=user, post_id=post).delete()
     elif data_action == 'save':
         model = Saves
     else:
         model = Reposts
 
 
-    if model == like_model and dislike_model.objects.filter(user_id=user, post_id=post).first():
-        dislike_model.objects.get(user_id=user, post_id=post).delete()
-    elif model == dislike_model and like_model.objects.filter(user_id=user, post_id=post).first():
-        like_model.objects.get(user_id=user, post_id=post).delete()
     
     try:
         model.objects.get(user_id=user, post_id=post).delete()

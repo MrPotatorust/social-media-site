@@ -13,13 +13,12 @@ import {
   ArrowUpCircleIcon as ArrowUpCircleIconActive,
   BookmarkIcon as BookmarkIconActive,
 } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Post(props: postType) {
   const post = props.postData;
   const profileLink = `profile/${post.author}`;
   const submit = useSubmit();
-  console.log(post.liked, post.disliked);
   const [postState, setPostState] = useState({
     likes: post.like_count,
     dislikes: post.dislike_count,
@@ -30,6 +29,21 @@ export default function Post(props: postType) {
     reposted: post.reposted,
     saved: post.saved,
   });
+
+  //! REWORK THIS SO THE STATE IS SYNCED WITH THE SERVER
+  // useEffect(() => {
+  //   console.log("render", post.id)
+  //   setPostState({
+  //     likes: post.like_count,
+  //     dislikes: post.dislike_count,
+  //     reposts: post.repost_count,
+  //     saves: post.save_count,
+  //     liked: post.liked,
+  //     disliked: post.disliked,
+  //     reposted: post.reposted,
+  //     saved: post.saved,
+  //   });
+  // }, [props]);
 
   function postInteraction(e: React.MouseEvent) {
     const postId =
