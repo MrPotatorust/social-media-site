@@ -53,7 +53,7 @@ export class api {
     }
   }
 
-  static async postBtnInteraction(postId: number, action: string) {
+  static async postInteraction(postId: number, action: string) {
     const url = `${api.baseUrl}/handle-post-interaction`;
 
     try {
@@ -73,6 +73,7 @@ export class api {
       return `Fetch of postBtn failed ${err}`;
     }
   }
+
   static async getProfile(user: string) {
     const url = `${this.baseUrl}/get-profile/${user}`;
     try {

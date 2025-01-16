@@ -16,7 +16,18 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 }
 
 export async function clientAction({ request }: Route.ActionArgs) {
-  console.log("request sent to home");
+  const formData = await request.formData();
+  let response;
+
+  if (formData.get("action") === "postInteraction") {
+    response = api.postInteraction(
+      formData.get("postId") as any,
+      formData.get("postAction") as any
+    );
+  } else {
+    response = "uknown clientAction";
+  }
+  return response;
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {

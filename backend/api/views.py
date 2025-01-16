@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Post, Likes, Saves, Reposts, UserMetaData, PasswordResetToken, EmailAuthToken
+from .models import Post, Likes, Saves, Reposts, Dislikes, UserMetaData, PasswordResetToken, EmailAuthToken
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from .serializers import PostSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer
@@ -94,12 +94,14 @@ def read_posts(request, search_query):
         saved = Exists(saves),
         reposted = Exists(reposts),
         disliked = Exists(dislikes))
+    
 
     if search_query != 'null':
         queryset = base_queryset.filter(text__contains = search_query)[0:20]
     else:
         queryset = base_queryset[0:20]
     serializer = PostSerializer(queryset, many=True).data
+
     return Response(serializer, status=status.HTTP_200_OK)
 
 
@@ -107,7 +109,6 @@ def read_posts(request, search_query):
 def register_user(request):
     serializer = UserRegisterSerializer(data=request.data)
     serializer.is_valid()
-    print(serializer.errors)
     if serializer.is_valid():
         serializer.save()
         
@@ -165,23 +166,46 @@ def logout_user(request):
 @auth_check
 def handle_post_interaction(request):
     
+
+
     data = request.data
     data_action = data['action']
-
-
-    if data_action == 'likes':
-        model = Likes
-    elif data_action == 'saves':
-        model = Saves
-    else:
-        model = Reposts
-
+    like_model = Likes
+    dislike_model = Dislikes
+    
+    
     try:
         user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
         post = Post.objects.get(id=data["post_id"])
     except:
         return Response("failed to get an user/post object instance", status=status.HTTP_400_BAD_REQUEST)
 
+    if data_action == 'like':
+        model = like_model
+        # try:
+        #     if(like_model.objects.filter(user_id=user, post_id=post).first()):
+        #         dislike_model.objects.get(user_id=user, post_id=post).delete()
+        # except:
+        #     pass
+
+    elif data_action == "dislike":
+        model = dislike_model
+        # try:
+        #     like_model.objects.get(user_id=user, post_id=post).delete()
+        #     dislike_model.objects.get(user_id=user, post_id=post).delete()
+        # except:
+        #     pass
+    elif data_action == 'save':
+        model = Saves
+    else:
+        model = Reposts
+
+
+    if model == like_model and dislike_model.objects.filter(user_id=user, post_id=post).first():
+        dislike_model.objects.get(user_id=user, post_id=post).delete()
+    elif model == dislike_model and like_model.objects.filter(user_id=user, post_id=post).first():
+        like_model.objects.get(user_id=user, post_id=post).delete()
+    
     try:
         model.objects.get(user_id=user, post_id=post).delete()
         return Response("changed value to false", status=status.HTTP_200_OK)

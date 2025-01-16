@@ -143,3 +143,4 @@ class ResetVerificationTokenManager:
         except:
             return Response('The link is no longer valid', status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_200_OK)
+    
