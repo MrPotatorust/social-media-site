@@ -1,4 +1,4 @@
-import { Link, useOutletContext, useSubmit } from "react-router";
+import { Link, useFetcher, useOutletContext, useSubmit } from "react-router";
 import type { OutletContextType, postType } from "~/types";
 import {
   HandThumbDownIcon,
@@ -17,10 +17,12 @@ import { useEffect, useState } from "react";
 
 export default function Post(props: postType) {
   const { user } = useOutletContext<OutletContextType>();
-
   const post = props.postData;
+
   const profileLink = `profile/${post.author}`;
   const submit = useSubmit();
+  const postInteractionFetcher = useFetcher();
+
   const [postState, setPostState] = useState({
     likes: post.like_count,
     dislikes: post.dislike_count,
@@ -35,19 +37,21 @@ export default function Post(props: postType) {
   const [error, setError] = useState<string>();
 
   //! REWORK THIS SO THE STATE IS SYNCED WITH THE SERVER
-  // useEffect(() => {
-  //   console.log("render", post.id)
-  //   setPostState({
-  //     likes: post.like_count,
-  //     dislikes: post.dislike_count,
-  //     reposts: post.repost_count,
-  //     saves: post.save_count,
-  //     liked: post.liked,
-  //     disliked: post.disliked,
-  //     reposted: post.reposted,
-  //     saved: post.saved,
-  //   });
-  // }, [props]);
+  useEffect(() => {
+    console.log("render", post.id);
+    if (postInteractionFetcher.state === "idle"){
+      setPostState({
+        likes: post.like_count,
+        dislikes: post.dislike_count,
+        reposts: post.repost_count,
+        saves: post.save_count,
+        liked: post.liked,
+        disliked: post.disliked,
+        reposted: post.reposted,
+        saved: post.saved,
+      });
+    }
+  }, [postInteractionFetcher.state]);
 
   function postInteraction(e: React.MouseEvent) {
     if (!user.isAuthenticated) {
@@ -102,7 +106,7 @@ export default function Post(props: postType) {
 
       setError("");
 
-      submit(
+      postInteractionFetcher.submit(
         { action: "postInteraction", postId: postId, postAction: postAction },
         { method: "post" }
       );
