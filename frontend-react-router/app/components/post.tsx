@@ -1,5 +1,5 @@
-import { Link, useSubmit } from "react-router";
-import type { postType } from "~/types";
+import { Link, useOutletContext, useSubmit } from "react-router";
+import type { OutletContextType, postType } from "~/types";
 import {
   HandThumbDownIcon,
   HandThumbUpIcon,
@@ -16,6 +16,8 @@ import {
 import { useEffect, useState } from "react";
 
 export default function Post(props: postType) {
+  const { user } = useOutletContext<OutletContextType>();
+
   const post = props.postData;
   const profileLink = `profile/${post.author}`;
   const submit = useSubmit();
@@ -29,6 +31,8 @@ export default function Post(props: postType) {
     reposted: post.reposted,
     saved: post.saved,
   });
+
+  const [error, setError] = useState<string>();
 
   //! REWORK THIS SO THE STATE IS SYNCED WITH THE SERVER
   // useEffect(() => {
@@ -46,11 +50,19 @@ export default function Post(props: postType) {
   // }, [props]);
 
   function postInteraction(e: React.MouseEvent) {
+    if (!user.isAuthenticated) {
+      setError("you have to be logged in to interact with posts");
+      console.log(e.currentTarget);
+      return;
+    }
+
     const postId =
       e.currentTarget?.parentNode?.parentNode?.parentElement?.getAttribute(
         "data-key"
       );
+
     const postAction = e.currentTarget?.getAttribute("name");
+
     if (postId && postAction) {
       setPostState((oldPost) => {
         if (postAction === "like" && oldPost.likes >= 0) {
@@ -87,6 +99,9 @@ export default function Post(props: postType) {
           return oldPost;
         }
       });
+
+      setError("");
+
       submit(
         { action: "postInteraction", postId: postId, postAction: postAction },
         { method: "post" }
@@ -181,6 +196,7 @@ export default function Post(props: postType) {
           {post.pub_date}
         </span>
       </div>
+      {error && <h4 className="text-red-500">{error}</h4>}
     </div>
   );
 }

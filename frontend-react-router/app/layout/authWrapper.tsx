@@ -9,18 +9,25 @@ import {
   type SubmitTarget,
 } from "react-router";
 import React, { useEffect, useState } from "react";
-import type { RouteAuthType } from "~/types";
+import type { OutletContextType, RouteAuthType } from "~/types";
 
 export default function AuthWrapper() {
-  const [user, setUser] = useState({
-    name: localStorage.getItem("username"),
-    isAuthenticated:
-      localStorage.getItem("isAuthenticated") == "true" ? true : false,
-    role: "admin",
-  });
-
   const submit = useSubmit();
   const logoutFetcher = useFetcher();
+
+  const [user, setUser] = useState({
+    name: localStorage.getItem("username") ?? "",
+    isAuthenticated:
+      localStorage.getItem("isAuthenticated") == "true" ? true : false,
+  });
+
+  useEffect(() => {
+    if (logoutFetcher.data === true) {
+      setUser((user) => ({ ...user, isAuthenticated: false }));
+      localStorage.setItem("username", "");
+      localStorage.setItem("isAuthenticated", "false");
+    }
+  }, [logoutFetcher.data]);
 
   function login(username: string) {
     setUser({ ...user, name: username, isAuthenticated: true });
@@ -32,14 +39,6 @@ export default function AuthWrapper() {
   async function logout() {
     logoutFetcher.submit({ action: "logout" }, { method: "post", action: "/" });
   }
-
-  useEffect(() => {
-    if (logoutFetcher.data === true) {
-      setUser((user) => ({ ...user, isAuthenticated: false }));
-      localStorage.setItem("username", "");
-      localStorage.setItem("isAuthenticated", "false");
-    }
-  }, [logoutFetcher.data]);
 
   function routePrivacy(
     routeAuth: RouteAuthType,
@@ -57,5 +56,17 @@ export default function AuthWrapper() {
     return false;
   }
 
-  return <Outlet context={{ user, setUser, login, logout, routePrivacy }} />;
+  return (
+    <Outlet
+      context={
+        {
+          user,
+          setUser,
+          login,
+          logout,
+          routePrivacy,
+        } satisfies OutletContextType
+      }
+    />
+  );
 }

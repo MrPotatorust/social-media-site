@@ -2,14 +2,18 @@ from rest_framework import serializers
 from .models import Post, Likes, UserMetaData, Image, Country
 from django.contrib.auth.models import User
 
-
-class PostSerializer(serializers.ModelSerializer):
-
+class LoggedOutPostSerializer(serializers.ModelSerializer):
     author = serializers.CharField()
     like_count = serializers.IntegerField()
     dislike_count = serializers.IntegerField()
     repost_count = serializers.IntegerField()
     save_count = serializers.IntegerField()
+
+    class Meta:
+        model = Post
+        fields = ['id', 'text', 'pub_date', 'author', 'like_count', 'dislike_count', 'save_count', 'repost_count']
+class LoggedInPostSerializer(LoggedOutPostSerializer):
+
     liked = serializers.BooleanField()
     disliked = serializers.BooleanField()
     saved = serializers.BooleanField()
@@ -19,6 +23,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'text', 'pub_date', 'author', 'like_count', 'dislike_count', 'save_count', 'repost_count', 'liked', 'disliked', 'saved', 'reposted']
+
 
 
 

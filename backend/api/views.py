@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Post, Likes, Saves, Reposts, Dislikes, UserMetaData, PasswordResetToken, EmailAuthToken
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from .serializers import PostSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer
+from .serializers import LoggedOutPostSerializer, LoggedInPostSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer
 from django.db.models import Count, Case, When, Value, IntegerField, F, Exists, OuterRef
 from django.middleware.csrf import get_token
 from datetime import timedelta
@@ -64,45 +64,55 @@ def create_post(request):
 
 @api_view(['GET'])
 def read_post(request, pk):
-    try:
-        queryset = Post.objects.filter(id=pk)
-        return Response(PostSerializer(queryset).data)
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response("currently under development", status=status.HTTP_401_UNAUTHORIZED)
+    # try:
+    #     queryset = Post.objects.filter(id=pk)
+    #     return Response(PostSerializer(queryset).data)
+    # except:
+    #     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# ! I have to add exception when the user is not logged in because this will throw an error
 @api_view(['GET'])
 def read_posts(request, search_query):
 
-    try:
-        user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
-    except:
-        return Response("failed to get an object instance", status=status.HTTP_400_BAD_REQUEST)
+    token = Token.objects.filter(key=request.COOKIES.get("auth_token")).first()
+    # return Response("failed to get an object instance", status=status.HTTP_400_BAD_REQUEST)
 
-    likes = Likes.objects.filter(user_id=user, post_id=OuterRef('pk'))
-    saves = Saves.objects.filter(user_id=user, post_id=OuterRef('pk'))
-    reposts = Reposts.objects.filter(user_id=user, post_id=OuterRef('pk'))
-    dislikes = Dislikes.objects.filter(user_id=user, post_id=OuterRef('pk'))
 
-    base_queryset = Post.objects.annotate(
-        like_count = Count("likes"), 
-        save_count = Count("saves"),
-        repost_count = Count("reposts"),
-        dislike_count = Count("dislikes"),
-        liked = Exists(likes),
-        disliked = Exists(dislikes),
-        saved = Exists(saves),
-        reposted = Exists(reposts))
+    if token:
+        user = token.user
+        likes = Likes.objects.filter(user_id=user, post_id=OuterRef('pk'))
+        saves = Saves.objects.filter(user_id=user, post_id=OuterRef('pk'))
+        reposts = Reposts.objects.filter(user_id=user, post_id=OuterRef('pk'))
+        dislikes = Dislikes.objects.filter(user_id=user, post_id=OuterRef('pk'))
+        base_queryset = Post.objects.annotate(
+            like_count = Count("likes"), 
+            save_count = Count("saves"),
+            repost_count = Count("reposts"),
+            dislike_count = Count("dislikes"),
+            liked = Exists(likes),
+            disliked = Exists(dislikes),
+            saved = Exists(saves),
+            reposted = Exists(reposts))
+        
+        current_serializer = LoggedInPostSerializer
+        
+    else:
+        base_queryset = Post.objects.annotate(
+            like_count = Count("likes"), 
+            save_count = Count("saves"),
+            repost_count = Count("reposts"),
+            dislike_count = Count("dislikes"))
+        
+        current_serializer = LoggedOutPostSerializer
+
     
 
     if search_query != 'null':
         queryset = base_queryset.filter(text__contains = search_query)[0:20]
     else:
         queryset = base_queryset[0:20]
-    serializer = PostSerializer(queryset, many=True).data
-
-    # print(serializer)
+    serializer = current_serializer(queryset, many=True).data
 
     return Response(serializer, status=status.HTTP_200_OK)
 
@@ -159,7 +169,15 @@ def logout_user(request):
     try:
         Token.objects.get(key=auth_token)
         response = Response(status=status.HTTP_204_NO_CONTENT)
-        response.delete_cookie("auth_token")
+        response.set_cookie(
+                key='auth_token', 
+                value="",  # Assuming you're using token authentication
+                expires=0,
+                httponly=True,  # Crucial for HTTP-only
+                secure=True,    # Only sent over HTTPS
+                path="/",
+                samesite='none'  # Prevents CSRF
+            )
         return response
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
