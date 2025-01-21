@@ -36,10 +36,8 @@ export default function Post(props: postType) {
 
   const [error, setError] = useState<string>();
 
-  //! REWORK THIS SO THE STATE IS SYNCED WITH THE SERVER
   useEffect(() => {
-    console.log("render", post.id);
-    if (postInteractionFetcher.state === "idle"){
+    if (postInteractionFetcher.state === "idle") {
       setPostState({
         likes: post.like_count,
         dislikes: post.dislike_count,

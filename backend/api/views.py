@@ -78,7 +78,6 @@ def read_posts(request, search_query):
     token = Token.objects.filter(key=request.COOKIES.get("auth_token")).first()
     # return Response("failed to get an object instance", status=status.HTTP_400_BAD_REQUEST)
 
-
     if token:
         user = token.user
         likes = Likes.objects.filter(user_id=user, post_id=OuterRef('pk'))
@@ -106,12 +105,12 @@ def read_posts(request, search_query):
         
         current_serializer = LoggedOutPostSerializer
 
-    
+    base_queryset = base_queryset.order_by("-pub_date")
 
     if search_query != 'null':
-        queryset = base_queryset.filter(text__contains = search_query)[0:20]
+        queryset = base_queryset.filter(text__contains = search_query)[:20]
     else:
-        queryset = base_queryset[0:20]
+        queryset = base_queryset[:20]
     serializer = current_serializer(queryset, many=True).data
 
     return Response(serializer, status=status.HTTP_200_OK)

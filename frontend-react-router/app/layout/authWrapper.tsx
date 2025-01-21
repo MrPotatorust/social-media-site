@@ -27,7 +27,7 @@ export default function AuthWrapper() {
       localStorage.setItem("username", "");
       localStorage.setItem("isAuthenticated", "false");
     }
-  }, [logoutFetcher.data]);
+  }, [logoutFetcher.state]);
 
   function login(username: string) {
     setUser({ ...user, name: username, isAuthenticated: true });
@@ -37,7 +37,10 @@ export default function AuthWrapper() {
   }
 
   async function logout() {
-    logoutFetcher.submit({ action: "logout" }, { method: "post", action: "/" });
+    await logoutFetcher.submit(
+      { action: "logout" },
+      { method: "post", action: "/" }
+    );
   }
 
   function routePrivacy(

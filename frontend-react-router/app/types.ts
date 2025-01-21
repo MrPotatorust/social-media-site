@@ -40,3 +40,9 @@ export interface postData {
 export interface postType {
   postData: postData;
 }
+
+export interface homeFormDataType {
+  postId: string;
+  postAction: string;
+  text: string;
+}

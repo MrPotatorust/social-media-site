@@ -12,6 +12,8 @@ class LoggedOutPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id', 'text', 'pub_date', 'author', 'like_count', 'dislike_count', 'save_count', 'repost_count']
+        ordering=["pub_date"]
+
 class LoggedInPostSerializer(LoggedOutPostSerializer):
 
     liked = serializers.BooleanField()

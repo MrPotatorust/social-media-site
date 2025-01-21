@@ -106,4 +106,24 @@ export class api {
       return `Fetch of readPosts failed ${err}`;
     }
   }
+
+  static async createPost(text:string) {
+    const url = `${api.baseUrl}/create-post`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: text,
+        }),
+      });
+      return await response.status;
+    } catch (err) {
+      return `Fetch of createPost failed ${err}`;
+    }
+  }
 }

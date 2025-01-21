@@ -7,11 +7,14 @@ from django.db.models import UniqueConstraint
 
 class Post(models.Model):
     text = models.TextField()
-    pub_date = models.DateField(auto_now_add=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    class Meta:
+        ordering=["-pub_date"]
 
     def __str__(self):
         return self.text
+    
 
 class Hashtags(models.Model):
     tag = models.CharField(max_length=32)
