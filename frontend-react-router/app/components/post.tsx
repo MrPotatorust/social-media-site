@@ -48,13 +48,23 @@ export default function Post(props: postType) {
         reposted: post.reposted,
         saved: post.saved,
       });
+    } else {
+      setPostState({
+        likes: post.like_count,
+        dislikes: post.dislike_count,
+        reposts: post.repost_count,
+        saves: post.save_count,
+        liked: post.liked,
+        disliked: post.disliked,
+        reposted: post.reposted,
+        saved: post.saved,
+      });
     }
-  }, [postInteractionFetcher.state]);
+  }, [postInteractionFetcher.state, props]);
 
   function postInteraction(e: React.MouseEvent) {
     if (!user.isAuthenticated) {
       setError("you have to be logged in to interact with posts");
-      console.log(e.currentTarget);
       return;
     }
 
@@ -103,7 +113,6 @@ export default function Post(props: postType) {
       });
 
       setError("");
-
       postInteractionFetcher.submit(
         { action: "postInteraction", postId: postId, postAction: postAction },
         { method: "post" }
@@ -112,7 +121,7 @@ export default function Post(props: postType) {
   }
 
   return (
-    <div className="space-y-1.5 max-w-7xl" data-key={post.id}>
+    <div className="space-y-1.5 w-96 mb-8 border-solid border-black" data-key={post.id}>
       <p className="text-wrap">{post.text}</p>
       <div>
         <span>

@@ -64,9 +64,9 @@ export default function Login() {
             name="password"
           />
           <button className="col-span-4 border-2 col-start-2">Login</button>
-          {fetcher.state !== "idle" && <p>Pending...</p>}
-          {data?.state == true && <p>Login Succesfull</p>}
-          {data?.state == false && <p>Login Failed</p>}
+          {(fetcher.state !== "idle" && <p>Pending...</p>) ||
+            (data?.state == true && <p>Login Succesfull</p>) ||
+            (data?.state == false && <p>Login Failed</p>)}
           {isNavigating && <p>Redirecting</p>}
         </fetcher.Form>
       </div>

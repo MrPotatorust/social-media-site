@@ -9,7 +9,7 @@ export default function MainLayout() {
     <>
       <Header />
       <Outlet context={useOutletContext<OutletContextType>()} />
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }

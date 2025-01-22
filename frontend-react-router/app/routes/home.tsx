@@ -13,6 +13,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  console.log("loading response from posts");
   const response = await api.getPosts();
   return response;
 }
