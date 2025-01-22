@@ -45,13 +45,34 @@ from dotenv import load_dotenv
 @api_view(['POST'])
 @auth_check
 def create_post(request):
+
+    hashtags = []
+    add_hashtag = False
+    temp_hashtag_word = ""
+
     try:
 
+        text = request.data["text"]
         post_data = {
-            "text":request.data["text"],
+            "text":text,
             "author": Token.objects.get(key=request.COOKIES.get("auth_token")).user.id
         }
+        
+        for char in text:
+            if char == "#":
+                add_hashtag = True
+            elif add_hashtag and char == " ":
+                hashtags.append(temp_hashtag_word)
+                temp_hashtag_word = ""
+                add_hashtag = False
+                
+            if add_hashtag:
+                temp_hashtag_word += char
 
+        if temp_hashtag_word:
+            hashtags.append(temp_hashtag_word)
+        
+        print(hashtags)
 
         serializer = CreatePostSerializer(data=post_data)
         if serializer.is_valid():
@@ -204,8 +225,10 @@ def handle_post_interaction(request):
             Likes.objects.get(user_id=user, post_id=post).delete()
     elif data_action == 'save':
         model = Saves
-    else:
+    elif data_action == 'repost':
         model = Reposts
+    else:
+        return Response("uknown action", status=status.HTTP_400_BAD_REQUEST)
 
 
     

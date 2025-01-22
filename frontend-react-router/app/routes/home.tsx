@@ -13,7 +13,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  console.log("loading response from posts");
   const response = await api.getPosts();
   return response;
 }
@@ -45,14 +44,16 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   return (
     <>
-      <h1 className="text-center">Welcome home</h1>
+      <h1 className="text-center pb-9">Welcome home</h1>
       <div className="flex-auto justify-items-center self-center">
         {user.isAuthenticated && (
-          <>
+          <div>
             {" "}
-            Post
+            <h2 className="text-left pl-2 font-medium">
+              Hey do you want to create a post?
+            </h2>
             <CreatePost />
-          </>
+          </div>
         )}
         <Posts posts={loaderData} />
       </div>

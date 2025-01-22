@@ -16,13 +16,13 @@ class Post(models.Model):
         return self.text
     
 
-class Hashtags(models.Model):
+class Hashtag(models.Model):
     tag = models.CharField(max_length=32)
     created_at = models.DateField(auto_now_add=True)
 
-class PostHashtags(models.Model):
+class PostHashtag(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
-    hashtag_id = models.ForeignKey(Hashtags, on_delete=models.CASCADE)
+    hashtag_id = models.ForeignKey(Hashtag, on_delete=models.CASCADE)
 
 class Likes(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -77,7 +77,9 @@ class Reposts(models.Model):
             models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-reposts")
         ]
 
-
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="original_posts")
+    comment_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment_posts")
 
 class Image(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -11,10 +11,9 @@ export default function CreatePost() {
   }, [fetcher.state]);
 
   return (
-    <fetcher.Form method="post" className="flex flex-col">
-      <input
-        type="textarea"
-        className="border-solid border-2"
+    <fetcher.Form method="post" className="flex flex-col items-center">
+      <textarea
+        className="border-solid border-2 w-96 h-24 p-1 align-top mb-2 rounded-xl"
         placeholder="Share your thoughts"
         name="text"
         value={value}
@@ -22,7 +21,10 @@ export default function CreatePost() {
         required
       />
       <input type="text" name="action" defaultValue="createPost" hidden />
-      <button type="submit" className="border-solid border-2">
+      <button
+        type="submit"
+        className="border-solid border-2 w-20 justify-center rounded-xl"
+      >
         Post
       </button>
     </fetcher.Form>

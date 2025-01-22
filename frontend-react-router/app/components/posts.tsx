@@ -10,7 +10,7 @@ export default function Posts(props: any) {
   }
   return (
     <>
-      <h1>Your posts</h1>
+      <h1 className="font-semibold text-5xl mt-10 mb-4">Your feed</h1>
       {posts ? (
         posts
       ) : (

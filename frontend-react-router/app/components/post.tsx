@@ -14,6 +14,7 @@ import {
   BookmarkIcon as BookmarkIconActive,
 } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
+import CreatePost from "./createPost";
 
 export default function Post(props: postType) {
   const { user } = useOutletContext<OutletContextType>();
@@ -36,6 +37,8 @@ export default function Post(props: postType) {
 
   const [error, setError] = useState<string>();
 
+  const [activeComment, setActiveComment] = useState<boolean>(false);
+
   useEffect(() => {
     if (postInteractionFetcher.state === "idle") {
       setPostState({
@@ -48,21 +51,23 @@ export default function Post(props: postType) {
         reposted: post.reposted,
         saved: post.saved,
       });
-    } else {
-      setPostState({
-        likes: post.like_count,
-        dislikes: post.dislike_count,
-        reposts: post.repost_count,
-        saves: post.save_count,
-        liked: post.liked,
-        disliked: post.disliked,
-        reposted: post.reposted,
-        saved: post.saved,
-      });
     }
-  }, [postInteractionFetcher.state, props]);
+    // else {
+    //   setPostState({
+    //     likes: post.like_count,
+    //     dislikes: post.dislike_count,
+    //     reposts: post.repost_count,
+    //     saves: post.save_count,
+    //     liked: post.liked,
+    //     disliked: post.disliked,
+    //     reposted: post.reposted,
+    //     saved: post.saved,
+    //   });
+    // }
+  }, [postInteractionFetcher.state]);
 
-  function postInteraction(e: React.MouseEvent) {
+  function interactionCheck(e: React.MouseEvent) {
+    setError("");
     if (!user.isAuthenticated) {
       setError("you have to be logged in to interact with posts");
       return;
@@ -71,9 +76,15 @@ export default function Post(props: postType) {
     const postId =
       e.currentTarget?.parentNode?.parentNode?.parentElement?.getAttribute(
         "data-key"
-      );
+      ) || false;
 
-    const postAction = e.currentTarget?.getAttribute("name");
+    const postAction = e.currentTarget?.getAttribute("name") || false;
+
+    return { postId, postAction } as any;
+  }
+
+  function postInteraction(e: React.MouseEvent) {
+    const { postId, postAction } = interactionCheck(e);
 
     if (postId && postAction) {
       setPostState((oldPost) => {
@@ -111,8 +122,6 @@ export default function Post(props: postType) {
           return oldPost;
         }
       });
-
-      setError("");
       postInteractionFetcher.submit(
         { action: "postInteraction", postId: postId, postAction: postAction },
         { method: "post" }
@@ -120,10 +129,30 @@ export default function Post(props: postType) {
     }
   }
 
+  function handleComment(e: React.MouseEvent) {
+    const { postId, postAction } = interactionCheck(e);
+
+    if (postId && postAction) {
+      setActiveComment((activeComment) => !activeComment);
+    }
+  }
+
   return (
-    <div className="space-y-1.5 w-96 mb-8 border-solid border-black" data-key={post.id}>
+    <div
+      className="space-y-1.5 w-96 p-4 mb-8 border rounded-lg border-solid border-slate-500 "
+      data-key={post.id}
+    >
       <p className="text-wrap">{post.text}</p>
       <div>
+        <span>
+          <button
+            className="pr-4"
+            name="comment"
+            onClick={(e) => handleComment(e)}
+          >
+            +
+          </button>
+        </span>
         <span>
           <HandThumbUpIcon
             className={
@@ -207,6 +236,7 @@ export default function Post(props: postType) {
           {post.pub_date}
         </span>
       </div>
+      {activeComment && <CreatePost />}
       {error && <h4 className="text-red-500">{error}</h4>}
     </div>
   );
