@@ -128,7 +128,22 @@ TEMPLATES = [
     },
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "TIMEOUT": None,
+        "OPTIONS": {"MAX_ENTRIES": 1000},
+    }
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
 WSGI_APPLICATION = 'server.wsgi.application'
+
+CSRF_COOKIE_HTTPONLY = False  # HTTP-only
+CSRF_COOKIE_SECURE = True    # HTTPS only
+CSRF_COOKIE_SAMESITE = 'none' # SameSite policy
 
 
 # Database

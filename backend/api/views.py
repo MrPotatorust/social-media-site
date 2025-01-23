@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import base36_to_int, int_to_base36
+from django.core.cache import cache
 
 from rest_framework.decorators import api_view
 from rest_framework.authtoken.models import Token
@@ -62,28 +63,28 @@ def create_post(request):
 
     serializer = CreatePostSerializer(data=post_data)
     if serializer.is_valid():
-        # for char in text:
-        #     if add_hashtag and char == " ":
-        #         hashtags.append(temp_hashtag_word)
-        #         temp_hashtag_word = ""
-        #         add_hashtag = False
-        #     elif add_hashtag:
-        #         temp_hashtag_word += char
-        #     if char == "#":
-        #         add_hashtag = True
+        for char in text:
+            if add_hashtag and char == " ":
+                hashtags.append(temp_hashtag_word)
+                temp_hashtag_word = ""
+                add_hashtag = False
+            elif add_hashtag:
+                temp_hashtag_word += char
+            if char == "#":
+                add_hashtag = True
                 
 
-        # if temp_hashtag_word:
-        #     hashtags.append(temp_hashtag_word)
+        if temp_hashtag_word:
+            hashtags.append(temp_hashtag_word)
 
         post = serializer.save()
-        # print(type(post))
-        # print(hashtags)
-        # hashtag_loop = min(3, len(hashtags))
-        # for hashtag in hashtags[:hashtag_loop]:
-        #     print(hashtag)
-        #     hashtag_model, created = Hashtag.objects.get_or_create(hashtag)
-            # PostHashtag.objects.create(post, hashtag_model)
+        print(type(post))
+        print(hashtags)
+        hashtag_loop = min(3, len(hashtags))
+        for hashtag in hashtags[:hashtag_loop]:
+            print(hashtag)
+            hashtag_model, created = Hashtag.objects.get_or_create(hashtag)
+            PostHashtag.objects.create(post, hashtag_model)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(status=status.HTTP_400_BAD_REQUEST)
     # except Exception as e:
@@ -385,4 +386,5 @@ def email_link_validity(request):
 @api_view(['POST'])
 @auth_check
 def token_check(request):
+    print(get_token(request))
     return Response(status=status.HTTP_202_ACCEPTED)
