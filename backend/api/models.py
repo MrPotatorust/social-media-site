@@ -20,9 +20,15 @@ class Hashtag(models.Model):
     tag = models.CharField(max_length=32, unique=True)
     created_at = models.DateField(auto_now_add=True)
 
+    def __str__(self):
+        return self.tag
+
 class PostHashtag(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     hashtag_id = models.ForeignKey(Hashtag, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"post_id: {self.post_id}, hashtag_id: {self.hashtag_id}"
 
 class Likes(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

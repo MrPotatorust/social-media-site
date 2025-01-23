@@ -3,7 +3,11 @@ import Post from "./post";
 
 export default function Posts(props: any) {
   let posts;
-  if (props.posts || props.posts != "failed to get an object instance") {
+  if (
+    props.posts &&
+    props.posts != "failed to get an object instance" &&
+    props.posts != "Fetch of readPosts failed TypeError: Failed to fetch"
+  ) {
     posts = props.posts.map((post: postData) => (
       <Post key={post.id} postData={post} />
     ));

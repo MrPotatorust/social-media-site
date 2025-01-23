@@ -137,12 +137,33 @@ export default function Post(props: postType) {
     }
   }
 
+  function highlightHashtags(text: string) {
+    return text;
+    // let returnText = "";
+    // let hashtagWord = "";
+
+    // for (let char of text) {
+    //   if (char == " ") {
+    //     returnText += <b>{hashtagWord}</b>;
+    //     hashtagWord = "";
+    //   } else if (char === "#") {
+    //     hashtagWord += char;
+    //   } else if (!hashtagWord) {
+    //     returnText += char;
+    //   } else {
+    //     hashtagWord += char;
+    //   }
+    // }
+    // console.log(returnText);
+    // return <p>returnText</p>;
+  }
+
   return (
     <div
       className="space-y-1.5 w-96 p-4 mb-8 border rounded-lg border-solid border-slate-500 "
       data-key={post.id}
     >
-      <p className="text-wrap">{post.text}</p>
+      <p className="text-wrap">{highlightHashtags(post.text)}</p>
       <div>
         <span>
           <button
