@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Post, Likes, Saves, Reposts, Dislikes, UserMetaData, PasswordResetToken, EmailAuthToken
+from .models import Post, Likes, Saves, Reposts, Dislikes, UserMetaData, PasswordResetToken, EmailAuthToken, Hashtag, PostHashtag
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from .serializers import LoggedOutPostSerializer, LoggedInPostSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer
@@ -50,37 +50,45 @@ def create_post(request):
     add_hashtag = False
     temp_hashtag_word = ""
 
-    try:
+    # try:
 
-        text = request.data["text"]
-        post_data = {
-            "text":text,
-            "author": Token.objects.get(key=request.COOKIES.get("auth_token")).user.id
-        }
-        
-        for char in text:
-            if char == "#":
-                add_hashtag = True
-            elif add_hashtag and char == " ":
-                hashtags.append(temp_hashtag_word)
-                temp_hashtag_word = ""
-                add_hashtag = False
+    text = request.data["text"]
+    post_data = {
+        "text":text,
+        "author": Token.objects.get(key=request.COOKIES.get("auth_token")).user.id
+    }
+
+
+
+    serializer = CreatePostSerializer(data=post_data)
+    if serializer.is_valid():
+        # for char in text:
+        #     if add_hashtag and char == " ":
+        #         hashtags.append(temp_hashtag_word)
+        #         temp_hashtag_word = ""
+        #         add_hashtag = False
+        #     elif add_hashtag:
+        #         temp_hashtag_word += char
+        #     if char == "#":
+        #         add_hashtag = True
                 
-            if add_hashtag:
-                temp_hashtag_word += char
 
-        if temp_hashtag_word:
-            hashtags.append(temp_hashtag_word)
-        
-        print(hashtags)
+        # if temp_hashtag_word:
+        #     hashtags.append(temp_hashtag_word)
 
-        serializer = CreatePostSerializer(data=post_data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-    except:
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        post = serializer.save()
+        # print(type(post))
+        # print(hashtags)
+        # hashtag_loop = min(3, len(hashtags))
+        # for hashtag in hashtags[:hashtag_loop]:
+        #     print(hashtag)
+        #     hashtag_model, created = Hashtag.objects.get_or_create(hashtag)
+            # PostHashtag.objects.create(post, hashtag_model)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+    # except Exception as e:
+        # print(e)
+    # return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
@@ -155,7 +163,6 @@ def login_user(request):
         username = request.data['username']
         password = request.data['password']
 
-        print(User.objects.get(username=username).is_active)
         user = authenticate(username=username, password=password)
         if user:
             token, created = Token.objects.get_or_create(user=user)
