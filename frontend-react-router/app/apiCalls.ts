@@ -107,7 +107,7 @@ export class api {
     }
   }
 
-  static async createPost(text:string) {
+  static async createPost(text: string) {
     const url = `${api.baseUrl}/create-post`;
     try {
       const response = await fetch(url, {
@@ -122,6 +122,19 @@ export class api {
         }),
       });
       return await response.status;
+    } catch (err) {
+      return `Fetch of createPost failed ${err}`;
+    }
+  }
+
+  static async getTrendingHashtags() {
+    const url = `${api.baseUrl}/get-trending-hashtags`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
+      return await response.json();
     } catch (err) {
       return `Fetch of createPost failed ${err}`;
     }

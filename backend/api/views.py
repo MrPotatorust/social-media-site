@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Post, Likes, Saves, Reposts, Dislikes, UserMetaData, PasswordResetToken, EmailAuthToken, Hashtag, PostHashtag
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from .serializers import LoggedOutPostSerializer, LoggedInPostSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer
+from .serializers import LoggedOutPostSerializer, LoggedInPostSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer, HashtagSerializer
 from django.db.models import Count, Case, When, Value, IntegerField, F, Exists, OuterRef
 from django.middleware.csrf import get_token
 from datetime import timedelta
@@ -78,9 +78,13 @@ def create_post(request):
                 hashtags.append(temp_hashtag_word)
 
             post = serializer.save()
-            hashtag_loop = min(3, len(hashtags))
-            for hashtag in hashtags[:hashtag_loop]:
+            for hashtag in hashtags[:len(hashtags)]:
                 hashtag_model, created = Hashtag.objects.get_or_create(tag=hashtag)
+                
+                if created == False:
+                    hashtag_model.mentions += 1
+                    hashtag_model.save()
+
                 PostHashtag.objects.create(post_id=post, hashtag_id=hashtag_model)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     except:
@@ -376,6 +380,12 @@ def email_link_validity(request):
         return response
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def get_trenging_hashtags(request):
+    trending_hashtags = Hashtag.objects.order_by("-mentions")[:10]
+    serializer = HashtagSerializer(trending_hashtags, many=True).data
+    return Response(serializer, status=status.HTTP_200_OK)
 
 
 # ! IF THE TOKEN IS INVALID THE LOGOUT HANDLING IS ON THE FRONTEND

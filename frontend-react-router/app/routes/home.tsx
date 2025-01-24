@@ -4,6 +4,7 @@ import { Form, useOutletContext } from "react-router";
 import Posts from "~/components/posts";
 import type { OutletContextType } from "~/types";
 import CreatePost from "~/components/createPost";
+import TredingHashtags from "~/components/trendingHashtags";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -13,8 +14,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
-  const response = await api.getPosts();
-  return response;
+  const posts = await api.getPosts();
+  const trendingHashtags = await api.getTrendingHashtags();
+  return { posts: posts, trendingHashtags: trendingHashtags };
 }
 
 export async function clientAction({ request }: Route.ActionArgs) {
@@ -55,7 +57,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             <CreatePost />
           </div>
         )}
-        <Posts posts={loaderData} />
+        <div>
+          <Posts posts={loaderData.posts} />
+        </div>
+        <TredingHashtags hashtags={loaderData.trendingHashtags} />
       </div>
     </>
   );

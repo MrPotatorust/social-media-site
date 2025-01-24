@@ -46,3 +46,9 @@ export interface homeFormDataType {
   postAction: string;
   text: string;
 }
+
+export interface trendingHashtagsType {
+  id: number;
+  tag: string;
+  mentions: number;
+}

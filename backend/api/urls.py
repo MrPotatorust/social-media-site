@@ -18,5 +18,6 @@ urlpatterns = [
     path('submit-password', views.reset_password_submit, name="changes the password"),
     path('reset-password-link-validity', views.reset_password_link_validity, name="checks the validity of a link"),
     path('send-email-verification', views.send_email_verification, name="sends email verification"),
-    path('email-verification-link-validity', views.email_link_validity, name="checks if the token is valid")
+    path('email-verification-link-validity', views.email_link_validity, name="checks if the token is valid"),
+    path('get-trending-hashtags', views.get_trenging_hashtags, name="returns the trending hashtags"),
 ]

@@ -95,7 +95,7 @@ class HashtagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hashtag
-        fields = ["*"]
+        fields = ["id", "mentions", "tag"]
 
 class PostHashtagSerializer(serializers.ModelSerializer):
 

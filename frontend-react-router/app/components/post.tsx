@@ -137,15 +137,22 @@ export default function Post(props: postType) {
     }
   }
 
-  //! REWORK THIS BECAUSE TECHNICALLY IT CREATES AN EMPTY SPACEA
+  //? this is used for setting the key
+  let wordCounter = 0;
+  //! REWORK THIS BECAUSE TECHNICALLY IT CREATES AN EMPTY SPACE
   function highlightHashtags(text: string) {
     let words = text.split(" ").map((word: string) => {
       if (word.startsWith("#")) {
-        return <b> {word}</b>;
+        wordCounter++;
+        return (
+          <b key={wordCounter} className="text-cyan-600">
+            {" "}
+            {word}
+          </b>
+        );
       }
       return ` ${word}`;
     });
-
 
     return words;
   }

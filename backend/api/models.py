@@ -19,6 +19,7 @@ class Post(models.Model):
 class Hashtag(models.Model):
     tag = models.CharField(max_length=32, unique=True)
     created_at = models.DateField(auto_now_add=True)
+    mentions = models.IntegerField(default=1)
 
     def __str__(self):
         return self.tag
