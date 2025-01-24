@@ -137,25 +137,17 @@ export default function Post(props: postType) {
     }
   }
 
+  //! REWORK THIS BECAUSE TECHNICALLY IT CREATES AN EMPTY SPACEA
   function highlightHashtags(text: string) {
-    return text;
-    // let returnText = "";
-    // let hashtagWord = "";
+    let words = text.split(" ").map((word: string) => {
+      if (word.startsWith("#")) {
+        return <b> {word}</b>;
+      }
+      return ` ${word}`;
+    });
 
-    // for (let char of text) {
-    //   if (char == " ") {
-    //     returnText += <b>{hashtagWord}</b>;
-    //     hashtagWord = "";
-    //   } else if (char === "#") {
-    //     hashtagWord += char;
-    //   } else if (!hashtagWord) {
-    //     returnText += char;
-    //   } else {
-    //     hashtagWord += char;
-    //   }
-    // }
-    // console.log(returnText);
-    // return <p>returnText</p>;
+
+    return words;
   }
 
   return (
