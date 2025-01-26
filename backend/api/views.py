@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Post, Likes, Saves, Reposts, Dislikes, UserMetaData, PasswordResetToken, EmailAuthToken, Hashtag, PostHashtag
+from .models import Post, Like, Save, Repost, Dislike, UserMetaData, PasswordResetToken, EmailAuthToken, Hashtag, PostHashtag
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from .serializers import LoggedOutPostSerializer, LoggedInPostSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer, HashtagSerializer
@@ -110,15 +110,15 @@ def read_posts(request, search_query):
 
     if token:
         user = token.user
-        likes = Likes.objects.filter(user_id=user, post_id=OuterRef('pk'))
-        saves = Saves.objects.filter(user_id=user, post_id=OuterRef('pk'))
-        reposts = Reposts.objects.filter(user_id=user, post_id=OuterRef('pk'))
-        dislikes = Dislikes.objects.filter(user_id=user, post_id=OuterRef('pk'))
+        likes = Like.objects.filter(user_id=user, post_id=OuterRef('pk'))
+        saves = Save.objects.filter(user_id=user, post_id=OuterRef('pk'))
+        reposts = Repost.objects.filter(user_id=user, post_id=OuterRef('pk'))
+        dislikes = Dislike.objects.filter(user_id=user, post_id=OuterRef('pk'))
         base_queryset = Post.objects.annotate(
-            like_count = Count("likes"), 
-            save_count = Count("saves"),
-            repost_count = Count("reposts"),
-            dislike_count = Count("dislikes"),
+            like_count = Count("like"), 
+            save_count = Count("save"),
+            repost_count = Count("repost"),
+            dislike_count = Count("dislike"),
             liked = Exists(likes),
             disliked = Exists(dislikes),
             saved = Exists(saves),
@@ -128,10 +128,10 @@ def read_posts(request, search_query):
         
     else:
         base_queryset = Post.objects.annotate(
-            like_count = Count("likes"), 
-            save_count = Count("saves"),
-            repost_count = Count("reposts"),
-            dislike_count = Count("dislikes"))
+            like_count = Count("like"), 
+            save_count = Count("save"),
+            repost_count = Count("repost"),
+            dislike_count = Count("dislike"))
         
         current_serializer = LoggedOutPostSerializer
 
@@ -224,17 +224,17 @@ def handle_post_interaction(request):
         return Response("failed to get an user/post object instance", status=status.HTTP_400_BAD_REQUEST)
 
     if data_action == 'like':
-        model = Likes
-        if Dislikes.objects.filter(user_id=user, post_id=post).first():
-            Dislikes.objects.get(user_id=user, post_id=post).delete()
+        model = Like
+        if Dislike.objects.filter(user_id=user, post_id=post).first():
+            Dislike.objects.get(user_id=user, post_id=post).delete()
     elif data_action == "dislike":
-        model = Dislikes
-        if Likes.objects.filter(user_id=user, post_id=post).first():
-            Likes.objects.get(user_id=user, post_id=post).delete()
+        model = Dislike
+        if Like.objects.filter(user_id=user, post_id=post).first():
+            Like.objects.get(user_id=user, post_id=post).delete()
     elif data_action == 'save':
-        model = Saves
+        model = Save
     elif data_action == 'repost':
-        model = Reposts
+        model = Repost
     else:
         return Response("uknown action", status=status.HTTP_400_BAD_REQUEST)
 

@@ -7,7 +7,7 @@ from rest_framework import generics, status
 from django.contrib.auth.models import User
 from datetime import timedelta
 from django.utils import timezone
-from .models import Post, Likes, Saves, Reposts, UserMetaData, PasswordResetToken, EmailAuthToken
+from .models import  UserMetaData
 from django.utils.http import base36_to_int, int_to_base36
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives

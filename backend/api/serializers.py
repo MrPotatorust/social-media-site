@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Likes, UserMetaData, Image, Country, Hashtag, PostHashtag
+from .models import Post, Like, UserMetaData, Image, Country, Hashtag, PostHashtag
 from django.contrib.auth.models import User
 
 class LoggedOutPostSerializer(serializers.ModelSerializer):

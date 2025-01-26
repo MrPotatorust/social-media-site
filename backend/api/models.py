@@ -6,7 +6,7 @@ from django.db.models import UniqueConstraint
 
 
 class Post(models.Model):
-    text = models.TextField()
+    text = models.TextField(null=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     class Meta:
@@ -15,6 +15,9 @@ class Post(models.Model):
     def __str__(self):
         return self.text
     
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="original_posts")
+    comment_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment_posts")
 
 class Hashtag(models.Model):
     tag = models.CharField(max_length=32, unique=True)
@@ -31,7 +34,7 @@ class PostHashtag(models.Model):
     def __str__(self):
         return f"post_id: {self.post_id}, hashtag_id: {self.hashtag_id}"
 
-class Likes(models.Model):
+class Like(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
@@ -39,13 +42,13 @@ class Likes(models.Model):
     class Meta:
 
         constraints=[
-            models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-likes")
+            models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-like")
         ]
         
     def __str__(self):
             return self.post_id, self.user_id
 
-class Dislikes(models.Model):
+class Dislike(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
@@ -53,7 +56,7 @@ class Dislikes(models.Model):
     class Meta:
 
         constraints=[
-            models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-dislikes")
+            models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-dislike")
         ]
 
 
@@ -61,7 +64,7 @@ class Dislikes(models.Model):
         return f"{self.user_id}, {self.post_id}"
 
 
-class Saves(models.Model):
+class Save(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
@@ -69,11 +72,11 @@ class Saves(models.Model):
     class Meta:
 
         constraints=[
-            models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-saves")
+            models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-save")
         ]
 
 
-class Reposts(models.Model):
+class Repost(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
@@ -81,12 +84,9 @@ class Reposts(models.Model):
     class Meta:
 
         constraints=[
-            models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-reposts")
+            models.UniqueConstraint(fields=["post_id", "user_id"], name="post_id__user_id-repost")
         ]
 
-class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="original_posts")
-    comment_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment_posts")
 
 class Image(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
