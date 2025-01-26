@@ -139,4 +139,16 @@ export class api {
       return `Fetch of createPost failed ${err}`;
     }
   }
+  static async getMedia(mediaPath: string) {
+    const url = `${api.baseUrl}/get-image/${mediaPath}`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
+      return await response.blob();
+    } catch (err) {
+      return `Fetch of getProfile failed ${err}`;
+    }
+  }
 }

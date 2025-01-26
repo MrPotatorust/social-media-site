@@ -291,10 +291,13 @@ def get_image(request, media_path):
     else:
         search_path = f"{base_path}/images/{media_path}"
 
-    return FileResponse(
-        open(search_path, 'rb'), 
-        content_type='image/jpeg'
-    )
+    try:
+        return FileResponse(
+            open(search_path, 'rb'), 
+            content_type='image/jpeg'
+        )
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
