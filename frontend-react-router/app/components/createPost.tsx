@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
+import type { createPostType } from "~/types";
 
-export default function CreatePost() {
+export default function CreatePost(props: createPostType) {
   const fetcher = useFetcher();
 
   const [value, setValue] = useState("");
 
   useEffect(() => {
     setValue("");
-  }, [fetcher.state]);
+    // if (props.setParentCommentState) {
+    //   props.setParentCommentState(false);
+    // }
+  }, [fetcher.data]);
 
   return (
     <fetcher.Form method="post" className="flex flex-col items-center">
@@ -21,6 +25,14 @@ export default function CreatePost() {
         required
       />
       <input type="text" name="action" defaultValue="createPost" hidden />
+      {props.isComment && (
+        <input
+          type="text"
+          name="commentId"
+          defaultValue={props.mainPostId}
+          hidden
+        />
+      )}
       <button
         type="submit"
         className="border-solid border-2 w-20 justify-center rounded-xl"

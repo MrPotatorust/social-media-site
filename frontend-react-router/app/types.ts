@@ -52,3 +52,9 @@ export interface trendingHashtagsType {
   tag: string;
   mentions: number;
 }
+
+export interface createPostType {
+  isComment?: boolean;
+  mainPostId?: number;
+  setParentCommentState?: React.Dispatch<React.SetStateAction<boolean>>;
+}

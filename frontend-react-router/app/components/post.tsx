@@ -73,20 +73,15 @@ export default function Post(props: postType) {
       return;
     }
 
-    const postId =
-      e.currentTarget?.parentNode?.parentNode?.parentElement?.getAttribute(
-        "data-key"
-      ) || false;
-
     const postAction = e.currentTarget?.getAttribute("name") || false;
 
-    return { postId, postAction } as any;
+    return { postAction } as any;
   }
 
   function postInteraction(e: React.MouseEvent) {
-    const { postId, postAction } = interactionCheck(e);
+    const { postAction } = interactionCheck(e);
 
-    if (postId && postAction) {
+    if (post.id && postAction) {
       setPostState((oldPost) => {
         if (postAction === "like" && oldPost.likes >= 0) {
           return {
@@ -123,16 +118,16 @@ export default function Post(props: postType) {
         }
       });
       postInteractionFetcher.submit(
-        { action: "postInteraction", postId: postId, postAction: postAction },
+        { action: "postInteraction", postId: post.id, postAction: postAction },
         { method: "post" }
       );
     }
   }
 
   function handleComment(e: React.MouseEvent) {
-    const { postId, postAction } = interactionCheck(e);
+    const { postAction } = interactionCheck(e);
 
-    if (postId && postAction) {
+    if (post.id && postAction) {
       setActiveComment((activeComment) => !activeComment);
     }
   }
@@ -158,10 +153,7 @@ export default function Post(props: postType) {
   }
 
   return (
-    <div
-      className="space-y-1.5 w-96 p-4 mb-8 border rounded-lg border-solid border-slate-500 "
-      data-key={post.id}
-    >
+    <div className="space-y-1.5 w-96 p-4 mb-8 border rounded-lg border-solid border-slate-500 ">
       <p className="text-wrap">{highlightHashtags(post.text)}</p>
       <div>
         <span>
@@ -256,7 +248,13 @@ export default function Post(props: postType) {
           {post.pub_date}
         </span>
       </div>
-      {activeComment && <CreatePost />}
+      {activeComment && (
+        <CreatePost
+          isComment={true}
+          mainPostId={post.id}
+          setParentCommentState={setActiveComment}
+        />
+      )}
       {error && <h4 className="text-red-500">{error}</h4>}
     </div>
   );
