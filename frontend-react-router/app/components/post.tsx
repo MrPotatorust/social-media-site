@@ -1,5 +1,5 @@
 import { Link, useFetcher, useOutletContext, useSubmit } from "react-router";
-import type { OutletContextType, postType } from "~/types";
+import type { OutletContextType, postData, postType } from "~/types";
 import {
   HandThumbDownIcon,
   HandThumbUpIcon,
@@ -23,6 +23,7 @@ export default function Post(props: postType) {
   const profileLink = `profile/${post.author}`;
   const submit = useSubmit();
   const postInteractionFetcher = useFetcher();
+  const getCommentsFetcher = useFetcher();
 
   const [postState, setPostState] = useState({
     likes: post.like_count,
@@ -37,7 +38,8 @@ export default function Post(props: postType) {
 
   const [error, setError] = useState<string>();
 
-  const [activeComment, setActiveComment] = useState<boolean>(false);
+  const [showCreatePost, setCreatePost] = useState<boolean>(false);
+  const [showComments, setShowComments] = useState<boolean>(false);
 
   useEffect(() => {
     if (postInteractionFetcher.state === "idle") {
@@ -52,18 +54,6 @@ export default function Post(props: postType) {
         saved: post.saved,
       });
     }
-    // else {
-    //   setPostState({
-    //     likes: post.like_count,
-    //     dislikes: post.dislike_count,
-    //     reposts: post.repost_count,
-    //     saves: post.save_count,
-    //     liked: post.liked,
-    //     disliked: post.disliked,
-    //     reposted: post.reposted,
-    //     saved: post.saved,
-    //   });
-    // }
   }, [postInteractionFetcher.state]);
 
   function interactionCheck(e: React.MouseEvent) {
@@ -128,8 +118,16 @@ export default function Post(props: postType) {
     const { postAction } = interactionCheck(e);
 
     if (post.id && postAction) {
-      setActiveComment((activeComment) => !activeComment);
+      setCreatePost((showCreatePost) => !showCreatePost);
     }
+  }
+
+  function loadComments() {
+    setShowComments((showComments) => !showComments);
+    getCommentsFetcher.submit(
+      { postId: post.id, action: "getComments" },
+      { method: "GET" }
+    );
   }
 
   //? this is used for setting the key
@@ -150,6 +148,14 @@ export default function Post(props: postType) {
     });
 
     return words;
+  }
+
+  let testResult;
+
+  if (getCommentsFetcher.data?.response) {
+    testResult = getCommentsFetcher.data.response.map((post: postData) => (
+      <Post key={post.id} postData={post} />
+    ));
   }
 
   return (
@@ -247,15 +253,22 @@ export default function Post(props: postType) {
           </Link>{" "}
           {post.pub_date}
         </span>
+        <span
+          className="flex justify-center underline text-sky-600 cursor-pointer"
+          onClick={loadComments}
+        >
+          Comments
+        </span>
       </div>
-      {activeComment && (
+      {showCreatePost && (
         <CreatePost
           isComment={true}
           mainPostId={post.id}
-          setParentCommentState={setActiveComment}
+          setParentCommentState={setCreatePost}
         />
       )}
       {error && <h4 className="text-red-500">{error}</h4>}
+      {showComments && testResult && testResult}
     </div>
   );
 }

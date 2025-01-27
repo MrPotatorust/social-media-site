@@ -24,7 +24,12 @@ export default function CreatePost(props: createPostType) {
         onChange={(e) => setValue(e.target.value)}
         required
       />
-      <input type="text" name="action" defaultValue="createPost" hidden />
+      <input
+        type="text"
+        name="action"
+        defaultValue={props.isComment ? "comment" : "createPost"}
+        hidden
+      />
       {props.isComment && (
         <input
           type="text"
@@ -36,6 +41,9 @@ export default function CreatePost(props: createPostType) {
       <button
         type="submit"
         className="border-solid border-2 w-20 justify-center rounded-xl"
+        onClick={() =>
+          props.setParentCommentState && props.setParentCommentState(false)
+        }
       >
         Post
       </button>

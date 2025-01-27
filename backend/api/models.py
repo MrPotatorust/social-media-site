@@ -9,6 +9,7 @@ class Post(models.Model):
     text = models.TextField(null=False)
     pub_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    main_post = models.BooleanField()
     class Meta:
         ordering=["-pub_date"]
 
@@ -18,6 +19,9 @@ class Post(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="original_posts")
     comment_post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment_posts")
+
+    def __str__(self):
+        return f"{self.post.text}, {self.comment_post.text}"
 
 class Hashtag(models.Model):
     tag = models.CharField(max_length=32, unique=True)

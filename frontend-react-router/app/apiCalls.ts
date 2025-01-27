@@ -95,7 +95,7 @@ export class api {
     } else {
       modifiedSearchQuery = "null";
     }
-    const url = `${api.baseUrl}/read-posts/${modifiedSearchQuery}`;
+    const url = `${api.baseUrl}/get-posts/${modifiedSearchQuery}`;
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -103,11 +103,11 @@ export class api {
       });
       return response.json();
     } catch (err) {
-      return `Fetch of readPosts failed ${err}`;
+      return `Fetch of getPosts failed ${err}`;
     }
   }
 
-  static async createPost(text: string) {
+  static async createPost(text: string, commentId = "") {
     const url = `${api.baseUrl}/create-post`;
     try {
       const response = await fetch(url, {
@@ -119,6 +119,9 @@ export class api {
         },
         body: JSON.stringify({
           text: text,
+          ...(commentId
+            ? { commentId: commentId, action: "comment" }
+            : { action: "createPost" }),
         }),
       });
       return await response.status;
@@ -149,6 +152,18 @@ export class api {
       return await response.blob();
     } catch (err) {
       return `Fetch of getProfile failed ${err}`;
+    }
+  }
+  static async getComments(postId: number) {
+    const url = `${api.baseUrl}/get-comments/${postId}`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
+      return await response.json();
+    } catch (err) {
+      return `Fetch of getComments failer ${err}`;
     }
   }
 }

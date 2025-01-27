@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Like, UserMetaData, Image, Country, Hashtag, PostHashtag
+from .models import Post, Like, UserMetaData, Image, Country, Hashtag, PostHashtag, Comment
 from django.contrib.auth.models import User
 
 class LoggedOutPostSerializer(serializers.ModelSerializer):
@@ -27,15 +27,34 @@ class LoggedInPostSerializer(LoggedOutPostSerializer):
         fields = ['id', 'text', 'pub_date', 'author', 'like_count', 'dislike_count', 'save_count', 'repost_count', 'liked', 'disliked', 'saved', 'reposted']
 
 
-
-
 class CreatePostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['text', 'author']
+        fields = ['text', 'author', 'main_post']
 
 
+class CreateCommentSerializer(serializers.ModelSerializer):
+    comment_post = CreatePostSerializer()  # This will accept post data instead of just an ID
+    
+    class Meta:
+        model = Comment
+        fields = ['post', 'comment_post']  # post will be the ID of the existing post
+
+    def create(self, validated_data):
+        # Extract the post data
+        comment_post_data = validated_data.pop('comment_post')
+        
+        # Create the new post
+        comment_post = Post.objects.create(**comment_post_data)
+        
+        # Create the comment connecting both posts
+        comment = Comment.objects.create(
+            post=validated_data['post'],
+            comment_post=comment_post
+        )
+        
+        return comment
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:

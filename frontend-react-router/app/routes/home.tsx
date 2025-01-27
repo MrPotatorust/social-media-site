@@ -13,9 +13,24 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+export async function clientLoader({
+  params,
+  request,
+}: Route.ClientLoaderArgs) {
   const posts = await api.getPosts();
   const trendingHashtags = await api.getTrendingHashtags();
+  if (request) {
+    const url = request.url;
+    const searchParams = new URLSearchParams(
+      url.substr(url.lastIndexOf("?") + 1)
+    );
+    const response = await api.getComments(searchParams.get("postId") as any);
+    return {
+      posts: posts,
+      trendingHashtags: trendingHashtags,
+      response: response,
+    };
+  }
   return { posts: posts, trendingHashtags: trendingHashtags };
 }
 
@@ -30,11 +45,16 @@ export async function clientAction({ request }: Route.ActionArgs) {
       formData.get("postAction") as any
     );
   } else if (action === "createPost") {
-    response = await api.createPost(formData.get("text") as any);
+    response = await api.createPost(formData.get("text") as string);
     if (response === 201) {
       return true;
     }
     return false;
+  } else if (action === "comment") {
+    response = await api.createPost(
+      formData.get("text") as string,
+      formData.get("commentId") as string
+    );
   } else {
     response = "uknown clientAction";
   }

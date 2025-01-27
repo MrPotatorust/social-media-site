@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from .models import Post, Like, Save, Repost, Dislike, UserMetaData, PasswordResetToken, EmailAuthToken, Hashtag, PostHashtag
+from .models import Post, Like, Save, Comment, Repost, Dislike, UserMetaData, PasswordResetToken, EmailAuthToken, Hashtag, PostHashtag
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-from .serializers import LoggedOutPostSerializer, LoggedInPostSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer, HashtagSerializer
+from .serializers import LoggedOutPostSerializer, LoggedInPostSerializer, CreateCommentSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer, HashtagSerializer
 from django.db.models import Count, Case, When, Value, IntegerField, F, Exists, OuterRef
 from django.middleware.csrf import get_token
 from datetime import timedelta
@@ -52,16 +52,22 @@ def create_post(request):
     temp_hashtag_word = ""
 
     try:
-
         text = request.data["text"]
         post_data = {
             "text":text,
-            "author": Token.objects.get(key=request.COOKIES.get("auth_token")).user.id
+            "author": Token.objects.get(key=request.COOKIES.get("auth_token")).user.id,
+            "main_post": True
         }
 
+        if request.data["action"] == "comment":
+            post_data["main_post"] = False
+            serializer = CreateCommentSerializer(data={"post": request.data["commentId"], "comment_post": post_data })
+        elif request.data["action"] == "createPost":
+            serializer = CreatePostSerializer(data=post_data)
+        else:
+            return Response("uknown action", status=status.HTTP_400_BAD_REQUEST)
 
 
-        serializer = CreatePostSerializer(data=post_data)
         if serializer.is_valid():
             for char in text:
                 if add_hashtag and char == " ":
@@ -78,6 +84,7 @@ def create_post(request):
                 hashtags.append(temp_hashtag_word)
 
             post = serializer.save()
+
             for hashtag in hashtags[:len(hashtags)]:
                 hashtag_model, created = Hashtag.objects.get_or_create(tag=hashtag)
                 
@@ -87,13 +94,16 @@ def create_post(request):
 
                 PostHashtag.objects.create(post_id=post, hashtag_id=hashtag_model)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        print(serializer.errors)
+        return Response("serialization failed", status=status.HTTP_400_BAD_REQUEST)
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
-def read_post(request, pk):
+def get_post(request, pk):
     return Response("currently under development", status=status.HTTP_401_UNAUTHORIZED)
     # try:
     #     queryset = Post.objects.filter(id=pk)
@@ -103,7 +113,7 @@ def read_post(request, pk):
 
 
 @api_view(['GET'])
-def read_posts(request, search_query):
+def get_posts(request, search_query):
 
     token = Token.objects.filter(key=request.COOKIES.get("auth_token")).first()
     # return Response("failed to get an object instance", status=status.HTTP_400_BAD_REQUEST)
@@ -135,7 +145,7 @@ def read_posts(request, search_query):
         
         current_serializer = LoggedOutPostSerializer
 
-    base_queryset = base_queryset.order_by("-pub_date")
+    base_queryset = base_queryset.filter(main_post = True).order_by("-pub_date")
 
     if search_query != 'null':
         queryset = base_queryset.filter(text__contains = search_query)[:20]
@@ -143,6 +153,22 @@ def read_posts(request, search_query):
         queryset = base_queryset[:20]
     serializer = current_serializer(queryset, many=True).data
 
+    return Response(serializer, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_comments(request, post_id):
+    
+    base_queryset = Post.objects.filter(
+    id__in=Comment.objects.filter(post=post_id).values_list("comment_post", flat=True)
+    ).annotate(
+            like_count = Count("like"), 
+            save_count = Count("save"),
+            repost_count = Count("repost"),
+            dislike_count = Count("dislike"))
+
+    serializer = LoggedOutPostSerializer(base_queryset, many=True).data
+    print(serializer)
     return Response(serializer, status=status.HTTP_200_OK)
 
 
