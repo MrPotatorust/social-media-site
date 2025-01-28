@@ -19,11 +19,13 @@ export async function clientLoader({
 }: Route.ClientLoaderArgs) {
   const posts = await api.getPosts();
   const trendingHashtags = await api.getTrendingHashtags();
-  if (request) {
-    const url = request.url;
-    const searchParams = new URLSearchParams(
-      url.substr(url.lastIndexOf("?") + 1)
-    );
+
+  const url = request.url;
+  const searchParams = new URLSearchParams(
+    url.substr(url.lastIndexOf("?") + 1)
+  );
+
+  if (searchParams.get("action") === "getComments") {
     const response = await api.getComments(searchParams.get("postId") as any);
     return {
       posts: posts,
@@ -38,6 +40,8 @@ export async function clientAction({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const action = formData.get("action");
   let response;
+
+  console.log(action);
 
   if (action === "postInteraction") {
     response = api.postInteraction(

@@ -31,6 +31,7 @@ export interface postData {
   dislike_count: number;
   repost_count: number;
   save_count: number;
+  comment_count: number;
   liked: boolean;
   saved: boolean;
   reposted: boolean;
@@ -56,5 +57,5 @@ export interface trendingHashtagsType {
 export interface createPostType {
   isComment?: boolean;
   mainPostId?: number;
-  setParentCommentState?: React.Dispatch<React.SetStateAction<boolean>>;
+  loadCommentsFromCreate?: () => void;
 }

@@ -40,7 +40,6 @@ export default function Profile({ loaderData }: Route.ComponentProps) {
   } = loaderData?.profile;
 
   useEffect(() => {
-    console.log("running useEffect");
     imageFetcher.submit({ imgPath: profile_img.file_path }, { method: "get" });
   }, [profile_img]);
 

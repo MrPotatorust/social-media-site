@@ -9,10 +9,17 @@ export default function CreatePost(props: createPostType) {
 
   useEffect(() => {
     setValue("");
-    // if (props.setParentCommentState) {
-    //   props.setParentCommentState(false);
-    // }
+    console.log(fetcher.data);
+    if (fetcher.data === 201) {
+      props.loadCommentsFromCreate && props.loadCommentsFromCreate();
+    }
   }, [fetcher.data]);
+
+  // useEffect(() => {
+  //   if (props.setParentCommentState) {
+  //     props.setParentCommentState(false);
+  //   }
+  // }, [fetcher.state]);
 
   return (
     <fetcher.Form method="post" className="flex flex-col items-center">
@@ -41,9 +48,6 @@ export default function CreatePost(props: createPostType) {
       <button
         type="submit"
         className="border-solid border-2 w-20 justify-center rounded-xl"
-        onClick={() =>
-          props.setParentCommentState && props.setParentCommentState(false)
-        }
       >
         Post
       </button>

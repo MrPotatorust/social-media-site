@@ -123,7 +123,6 @@ export default function Post(props: postType) {
   }
 
   function loadComments() {
-    setShowComments((showComments) => !showComments);
     getCommentsFetcher.submit(
       { postId: post.id, action: "getComments" },
       { method: "GET" }
@@ -150,10 +149,25 @@ export default function Post(props: postType) {
     return words;
   }
 
-  let testResult;
+  function loadCommentsFromCreate() {
+    setCreatePost(false);
+    setShowComments(true);
+    loadComments();
+  }
+
+  function loadCommentsFromClick() {
+    setShowComments((showComments) => {
+      if (!showComments) {
+        loadComments();
+      }
+      return !showComments;
+    });
+  }
+
+  let comments;
 
   if (getCommentsFetcher.data?.response) {
-    testResult = getCommentsFetcher.data.response.map((post: postData) => (
+    comments = getCommentsFetcher.data.response.map((post: postData) => (
       <Post key={post.id} postData={post} />
     ));
   }
@@ -255,20 +269,21 @@ export default function Post(props: postType) {
         </span>
         <span
           className="flex justify-center underline text-sky-600 cursor-pointer"
-          onClick={loadComments}
+          onClick={loadCommentsFromClick}
         >
-          Comments
+          {post.comment_count} Comments
         </span>
       </div>
       {showCreatePost && (
         <CreatePost
           isComment={true}
           mainPostId={post.id}
-          setParentCommentState={setCreatePost}
+          loadCommentsFromCreate={loadCommentsFromCreate}
         />
       )}
       {error && <h4 className="text-red-500">{error}</h4>}
-      {showComments && testResult && testResult}
+      {showComments && comments && comments}
+      {/* {comments} */}
     </div>
   );
 }

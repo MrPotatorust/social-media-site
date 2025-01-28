@@ -129,6 +129,7 @@ def get_posts(request, search_query):
             save_count = Count("save"),
             repost_count = Count("repost"),
             dislike_count = Count("dislike"),
+            comment_count = Count("original_posts"),
             liked = Exists(likes),
             disliked = Exists(dislikes),
             saved = Exists(saves),
@@ -141,7 +142,8 @@ def get_posts(request, search_query):
             like_count = Count("like"), 
             save_count = Count("save"),
             repost_count = Count("repost"),
-            dislike_count = Count("dislike"))
+            dislike_count = Count("dislike"),
+            comment_count = Count("original_posts"))
         
         current_serializer = LoggedOutPostSerializer
 
@@ -165,10 +167,10 @@ def get_comments(request, post_id):
             like_count = Count("like"), 
             save_count = Count("save"),
             repost_count = Count("repost"),
-            dislike_count = Count("dislike"))
+            dislike_count = Count("dislike"),
+            comment_count = Count("original_posts")).order_by("-pub_date")
 
     serializer = LoggedOutPostSerializer(base_queryset, many=True).data
-    print(serializer)
     return Response(serializer, status=status.HTTP_200_OK)
 
 

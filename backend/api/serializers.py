@@ -8,10 +8,11 @@ class LoggedOutPostSerializer(serializers.ModelSerializer):
     dislike_count = serializers.IntegerField()
     repost_count = serializers.IntegerField()
     save_count = serializers.IntegerField()
+    comment_count = serializers.IntegerField()
 
     class Meta:
         model = Post
-        fields = ['id', 'text', 'pub_date', 'author', 'like_count', 'dislike_count', 'save_count', 'repost_count']
+        fields = ['id', 'text', 'pub_date', 'author', 'like_count', 'dislike_count', 'save_count', 'repost_count', 'comment_count']
         ordering=["pub_date"]
 
 class LoggedInPostSerializer(LoggedOutPostSerializer):
@@ -21,10 +22,9 @@ class LoggedInPostSerializer(LoggedOutPostSerializer):
     saved = serializers.BooleanField()
     reposted = serializers.BooleanField()
 
-
     class Meta:
         model = Post
-        fields = ['id', 'text', 'pub_date', 'author', 'like_count', 'dislike_count', 'save_count', 'repost_count', 'liked', 'disliked', 'saved', 'reposted']
+        fields = ['id', 'text', 'pub_date', 'author', 'like_count', 'dislike_count', 'save_count', 'repost_count', 'comment_count', 'liked', 'disliked', 'saved', 'reposted']
 
 
 class CreatePostSerializer(serializers.ModelSerializer):
