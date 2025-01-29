@@ -1,5 +1,6 @@
 import {
   Form,
+  Link,
   useFetcher,
   useNavigate,
   useNavigation,
@@ -31,9 +32,10 @@ export default function Login() {
   const navigation = useNavigation();
   const isNavigating = Boolean(navigation.location);
 
-  let fetcher = useFetcher();
+  let loginFetcher = useFetcher();
+  let resetPasswordFetcher = useFetcher();
 
-  let data = fetcher?.data;
+  let data = loginFetcher?.data;
 
   useEffect(() => {
     routePrivacy(routeList.Login.routeAuth, navigate);
@@ -47,7 +49,7 @@ export default function Login() {
   return (
     <div className="" id="login-page">
       <div className="grid place-items-center h-screen">
-        <fetcher.Form
+        <loginFetcher.Form
           method="post"
           className="grid grid-cols-6 grid-rows-6 size-96 place-items-center"
           action="/login"
@@ -64,11 +66,14 @@ export default function Login() {
             name="password"
           />
           <button className="col-span-4 border-2 col-start-2">Login</button>
-          {(fetcher.state !== "idle" && <p>Pending...</p>) ||
+          {(loginFetcher.state !== "idle" && <p>Pending...</p>) ||
             (data?.state == true && <p>Login Succesfull</p>) ||
             (data?.state == false && <p>Login Failed</p>)}
           {isNavigating && <p>Redirecting</p>}
-        </fetcher.Form>
+        </loginFetcher.Form>
+        <Link to="/reset-password" className="border-2">
+          Reset Password
+        </Link>
       </div>
     </div>
   );

@@ -83,7 +83,7 @@ export class api {
       });
       return await response.json();
     } catch (err) {
-      return `Fetch of getProfile failed ${err}`;
+      return false;
     }
   }
 
@@ -164,6 +164,99 @@ export class api {
       return await response.json();
     } catch (err) {
       return `Fetch of getComments failer ${err}`;
+    }
+  }
+
+  static async resetPassword(email: string) {
+    const url = `${api.baseUrl}/send-reset-password`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+        }),
+      });
+      return response.status;
+    } catch (err) {
+      return `Fetch of resetPassword failed ${err}`;
+    }
+  }
+
+  static async submitNewPassword(password: string, token: string) {
+    const url = `${api.baseUrl}/submit-password`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          password: password,
+          token: token,
+        }),
+      });
+      return response.status;
+    } catch (err) {
+      return `Fetch of submitNewPassword failed ${err}`;
+    }
+  }
+
+  static async resetPasswordLinkValidity(token: string) {
+    const url = `${api.baseUrl}/reset-password-link-validity`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token,
+        }),
+      });
+      return response.status;
+    } catch (err) {
+      return `Fetch of resetPasswordLinkValidity failed ${err}`;
+    }
+  }
+
+  static async sendEmailVerification() {
+    const url = `${api.baseUrl}/send-email-verification`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response.status;
+    } catch (err) {
+      return `Fetch of sendEmailVerification failed ${err}`;
+    }
+  }
+
+  static async emailVerificationLinkValidity(token: string) {
+    const url = `${api.baseUrl}/email-verification-link-validity`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token,
+        }),
+      });
+      return response.status;
+    } catch (err) {
+      return `Fetch of emailVerificationLinkValidity failed ${err}`;
     }
   }
 }

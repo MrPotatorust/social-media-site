@@ -25,6 +25,12 @@ const exportRoutes = [
       index("routes/home.tsx"),
       route("profile/:username", "routes/profile.tsx"),
       route("login", "routes/login.tsx"),
+      route("reset-password", "routes/resetPassword.tsx"),
+      route(
+        "reset-password-validation/:token?",
+        "routes/resetPasswordSubmit.tsx"
+      ),
+      route("verify-email/:token?", "routes/verifyEmail.tsx"),
     ]),
   ]),
 ];

@@ -23,7 +23,7 @@ export default function Header() {
           {isAuth && <Link to={profileLink}>Profile</Link>}
         </li>
         <li className="m-2">{!isAuth && <Link to="login">Login</Link>}</li>
-        <li className="m-2">
+        <li className="m-2 self-end">
           {isAuth && (
             <a className="cursor-pointer" onClick={() => logout()}>
               Log out

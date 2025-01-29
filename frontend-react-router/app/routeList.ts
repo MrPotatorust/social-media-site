@@ -1,3 +1,4 @@
+import type VerifyEmail from "./routes/verifyEmail";
 import type { RouteListType } from "./types";
 
 export const routeList = <RouteListType>{
@@ -24,5 +25,21 @@ export const routeList = <RouteListType>{
     },
     path: "profile",
     file: "routes/profile.tsx",
+  },
+  ResetPassword: {
+    routeAuth: {
+      isPrivate: false,
+      showAuthenticated: false,
+    },
+    path: "reset-password",
+    file: "routes/resetPassword.tsx",
+  },
+  VerifyEmail: {
+    routeAuth: {
+      isPrivate: false,
+      showAuthenticated: false,
+    },
+    path: "verify-email",
+    file: "routes/verifyEmail.tsx",
   },
 };

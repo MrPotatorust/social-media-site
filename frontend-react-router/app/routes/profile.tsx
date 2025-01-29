@@ -5,6 +5,9 @@ import { useEffect } from "react";
 
 export async function clientLoader({ params, request }: Route.LoaderArgs) {
   let profile = await api.getProfile(params.username);
+  if (profile === false) {
+    return false;
+  }
   if (request) {
     const url = request.url;
     const searchParams = new URLSearchParams(
@@ -30,6 +33,9 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 export default function Profile({ loaderData }: Route.ComponentProps) {
   const imageFetcher = useFetcher();
 
+  if (loaderData === false) {
+    return <h2 className="text-red-600 text-4xl">Failed to get the profile</h2>;
+  }
   const {
     country,
     description,
