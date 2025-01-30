@@ -268,7 +268,9 @@ export default function Post(props: postType) {
           {post.pub_date}
         </span>
         <span
-          className="flex justify-center underline text-sky-600 cursor-pointer"
+          className={`flex justify-center underline ${
+            showComments ? "text-cyan-900" : "text-sky-600"
+          } cursor-pointer`}
           onClick={loadCommentsFromClick}
         >
           {post.comment_count} Comments

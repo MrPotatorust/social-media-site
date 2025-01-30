@@ -1,7 +1,8 @@
-import { useFetcher } from "react-router";
+import { useFetcher, useOutletContext } from "react-router";
 import type { Route } from "./+types/profile";
 import { api } from "~/apiCalls";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { OutletContextType } from "~/types";
 
 export async function clientLoader({ params, request }: Route.LoaderArgs) {
   let profile = await api.getProfile(params.username);
@@ -27,11 +28,22 @@ export async function clientLoader({ params, request }: Route.LoaderArgs) {
 }
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
-  console.log("sent request to profile");
+  const formData = await request.formData();
+
+  if (formData.get("action") === "sendVerificationEmail") {
+    const response = await api.sendEmailVerification();
+    if (response === 200) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export default function Profile({ loaderData }: Route.ComponentProps) {
   const imageFetcher = useFetcher();
+  const verificationEmailFetcher = useFetcher();
+  const [verificationSent, setVerificationSent] = useState<boolean>(false);
+
 
   if (loaderData === false) {
     return <h2 className="text-red-600 text-4xl">Failed to get the profile</h2>;
@@ -47,7 +59,17 @@ export default function Profile({ loaderData }: Route.ComponentProps) {
 
   useEffect(() => {
     imageFetcher.submit({ imgPath: profile_img.file_path }, { method: "get" });
-  }, [profile_img]);
+    if (verificationEmailFetcher.data === true && !verificationSent) {
+      setVerificationSent(true);
+    }
+  }, [profile_img, verificationEmailFetcher.data]);
+
+  function sendEmailVerification() {
+    verificationEmailFetcher.submit(
+      { action: "sendVerificationEmail" },
+      { method: "post" }
+    );
+  }
 
   return (
     <>
@@ -70,9 +92,16 @@ export default function Profile({ loaderData }: Route.ComponentProps) {
         <p>
           Email verified:{" "}
           {email_verified ? (
-            <strong>verified</strong>
+            <strong className="text-green-800">verified</strong>
           ) : (
-            <strong>not verified</strong>
+            <>
+              <strong className="text-red-800">not verified</strong>{" "}
+              {!verificationSent ? (
+                <button onClick={sendEmailVerification}>Verify</button>
+              ) : (
+                <p className="text-green-700">Verification sent!</p>
+              )}
+            </>
           )}
         </p>
       </div>
