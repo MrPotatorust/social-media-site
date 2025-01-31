@@ -134,6 +134,7 @@ class ResetVerificationTokenManager:
         try:
             model = self.django_model.objects.get(token=token)
             user = model.user
+
             if (timezone.now() - model.created_at) > timedelta(minutes=timeout_time) or self.generator.check_token(user, token) == False:
                 return Response('This link is no longer valid', status=status.HTTP_400_BAD_REQUEST)
             usermetadata = UserMetaData.objects.get(user=user)

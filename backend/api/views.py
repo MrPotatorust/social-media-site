@@ -389,6 +389,8 @@ def reset_password_link_validity(request):
     except:
         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+#! MAKE SURE valid_time IN manager.send_token() IS THE SAME AS timeout_time IN manager.validity()
+
 @auth_check
 @api_view(['POST'])
 def send_email_verification(request):
@@ -396,7 +398,7 @@ def send_email_verification(request):
     try:
         user = Token.objects.get(key=request.COOKIES.get("auth_token")).user
         manager = ResetVerificationTokenManager(EmailVerificationTokenGenerator, EmailAuthToken)
-        response = manager.send_token(user, "email_verification", "email-verification.html", 5, 120, False)
+        response = manager.send_token(user, "email_verification", "email-verification.html", 5, 30, False)
         return response
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
