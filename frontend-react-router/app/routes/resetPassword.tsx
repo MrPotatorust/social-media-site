@@ -28,7 +28,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     routePrivacy(routeList.Login.routeAuth, navigate);
-  });
+  }, []);
   //   useEffect(() => {
   //     if (fetcher.data) {
   //       navigate("/");
@@ -39,7 +39,16 @@ export default function ResetPassword() {
     <div className="flex-auto justify-items-center self-center">
       <h2>Reset Password Here</h2>
       <fetcher.Form method="post">
-        <input name="email" type="email" required />
+        <label>
+          Email
+          <input
+            className="border-2"
+            name="email"
+            type="email"
+            placeholder="john.wick@gmail.com"
+            required
+          />
+        </label>
         <button>Submit</button>
       </fetcher.Form>
       {fetcher.data && <p>if your email exist a reset email has been sent</p>}

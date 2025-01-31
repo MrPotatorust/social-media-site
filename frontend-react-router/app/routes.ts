@@ -31,6 +31,7 @@ const exportRoutes = [
         "routes/resetPasswordSubmit.tsx"
       ),
       route("verify-email/:token?", "routes/verifyEmail.tsx"),
+      route("register", "routes/register.tsx"),
     ]),
   ]),
 ];

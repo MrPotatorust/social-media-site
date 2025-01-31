@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
-import type { createPostType } from "~/types";
+import type { CreatePostType } from "~/types";
 
-export default function CreatePost(props: createPostType) {
+export default function CreatePost(props: CreatePostType) {
   const fetcher = useFetcher();
 
   const [value, setValue] = useState("");

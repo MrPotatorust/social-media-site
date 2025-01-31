@@ -23,7 +23,7 @@ export interface RouteListType {
   };
 }
 
-export interface postData {
+export interface PostData {
   id: number;
   author: string;
   text: string;
@@ -38,24 +38,36 @@ export interface postData {
   disliked: boolean;
   pub_date: string;
 }
-export interface postType {
-  postData: postData;
+export interface PostType {
+  postData: PostData;
 }
 
-export interface homeFormDataType {
+export interface HomeFormDataType {
   postId: string;
   postAction: string;
   text: string;
 }
 
-export interface trendingHashtagsType {
+export interface TrendingHashtagsType {
   id: number;
   tag: string;
   mentions: number;
 }
 
-export interface createPostType {
+export interface CreatePostType {
   isComment?: boolean;
   mainPostId?: number;
   loadCommentsFromCreate?: () => void;
 }
+
+export interface RegisterUser {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  password: string;
+}
+
+// export interface LooseObject {
+//   [key: string]: any;
+// }

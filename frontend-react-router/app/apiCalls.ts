@@ -1,3 +1,5 @@
+import type { RegisterUser } from "./types";
+
 export class api {
   static baseUrl = "http://127.0.0.1:8000/api";
   static async login(formData: FormData) {
@@ -257,6 +259,34 @@ export class api {
       return response.status;
     } catch (err) {
       return `Fetch of emailVerificationLinkValidity failed ${err}`;
+    }
+  }
+  static async registerUser({
+    firstName,
+    lastName,
+    username,
+    email,
+    password,
+  }: RegisterUser) {
+    const url = `${api.baseUrl}/register`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          first_name: firstName,
+          lastName: lastName,
+          username: username,
+          email: email,
+          password: password,
+        }),
+      });
+      return await response.json();
+    } catch (err) {
+      return `Fetch of registerUser failed ${err}`;
     }
   }
 }

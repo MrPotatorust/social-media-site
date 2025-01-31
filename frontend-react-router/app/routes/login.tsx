@@ -59,11 +59,15 @@ export default function Login() {
             className="border-2 col-span-4 col-start-2"
             type="text"
             name="username"
+            placeholder="JohnWick"
+            required
           />
           <input
             className="border-2 col-span-4 col-start-2"
             type="password"
             name="password"
+            placeholder="******"
+            required
           />
           <button className="col-span-4 border-2 col-start-2">Login</button>
           {(loginFetcher.state !== "idle" && <p>Pending...</p>) ||
@@ -73,6 +77,9 @@ export default function Login() {
         </loginFetcher.Form>
         <Link to="/reset-password" className="border-2">
           Reset Password
+        </Link>
+        <Link to="/register" className="border-2">
+          Register
         </Link>
       </div>
     </div>

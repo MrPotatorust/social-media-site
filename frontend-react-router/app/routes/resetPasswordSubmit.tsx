@@ -10,6 +10,7 @@ import {
 } from "react-router";
 import { useEffect } from "react";
 import { routeList } from "~/routeList";
+import RepeatPasswordInput from "~/components/form/repeatPassword";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   if (params.token) {
@@ -45,7 +46,7 @@ export default function ResetPasswordSubmit({
 
   useEffect(() => {
     routePrivacy(routeList.Login.routeAuth, navigate);
-  });
+  }, []);
 
   if (fetcher.data) {
     mainContent = (
@@ -59,14 +60,7 @@ export default function ResetPasswordSubmit({
   } else if (loaderData.success) {
     mainContent = (
       <fetcher.Form method="post">
-        <label>
-          Password
-          <input type="password" name="password1" required />
-        </label>
-        <label>
-          Repeat password
-          <input type="password" name="password2" required />
-        </label>
+        <RepeatPasswordInput />
         <input
           type="text"
           name="token"

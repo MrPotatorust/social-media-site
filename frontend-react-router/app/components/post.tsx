@@ -1,5 +1,5 @@
 import { Link, useFetcher, useOutletContext, useSubmit } from "react-router";
-import type { OutletContextType, postData, postType } from "~/types";
+import type { OutletContextType, PostData, PostType } from "~/types";
 import {
   HandThumbDownIcon,
   HandThumbUpIcon,
@@ -16,7 +16,7 @@ import {
 import { useEffect, useState } from "react";
 import CreatePost from "./createPost";
 
-export default function Post(props: postType) {
+export default function Post(props: PostType) {
   const { user } = useOutletContext<OutletContextType>();
   const post = props.postData;
 
@@ -167,7 +167,7 @@ export default function Post(props: postType) {
   let comments;
 
   if (getCommentsFetcher.data?.response) {
-    comments = getCommentsFetcher.data.response.map((post: postData) => (
+    comments = getCommentsFetcher.data.response.map((post: PostData) => (
       <Post key={post.id} postData={post} />
     ));
   }
