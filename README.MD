@@ -1,6 +1,7 @@
 # Social media site
 
-> [!CAUTION] > **WORK IT PROGRESS**
+> [!CAUTION]
+> **WORK IT PROGRESS**
 
 This project is the biggest project as of writing this README.MD
 
