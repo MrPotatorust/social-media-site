@@ -5,6 +5,9 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
+  resolve: {
+    extensions: [".js", ".ts", ".jsx", ".tsx"],
+  },
   css: {
     postcss: {
       plugins: [tailwindcss, autoprefixer],

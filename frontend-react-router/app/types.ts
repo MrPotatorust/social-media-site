@@ -60,12 +60,18 @@ export interface CreatePostType {
   loadCommentsFromCreate?: () => void;
 }
 
-export interface RegisterUser {
+export interface RegisterUserType {
   firstName: string;
   lastName: string;
   username: string;
   email: string;
   password: string;
+}
+
+export interface RepeatPasswordInput {
+  password1Errors: Array<string>;
+  password2Errors: Array<string>;
+  arePasswordsMatch: boolean;
 }
 
 // export interface LooseObject {

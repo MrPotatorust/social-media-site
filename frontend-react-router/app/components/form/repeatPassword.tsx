@@ -1,4 +1,9 @@
-export default function RepeatPasswordInput() {
+import React from "react";
+import type { RepeatPasswordInput } from "~/types";
+
+export default function RepeatPasswordInput(props: RepeatPasswordInput) {
+  const { password1Errors, password2Errors, arePasswordsMatch } = props;
+
   return (
     <>
       {" "}
@@ -11,6 +16,10 @@ export default function RepeatPasswordInput() {
           placeholder="******"
           required
         />
+        {password1Errors &&
+          password1Errors.map((error) => (
+            <p className="text-red-700">{error}</p>
+          ))}
       </label>
       <label>
         Repeat Password
@@ -21,7 +30,14 @@ export default function RepeatPasswordInput() {
           placeholder="******"
           required
         />
+        {password1Errors &&
+          password2Errors.map((error) => (
+            <p className="text-red-700">{error}</p>
+          ))}
       </label>
+      {arePasswordsMatch == false && (
+        <p className="text-red-700">Passwords dont match</p>
+      )}
     </>
   );
 }

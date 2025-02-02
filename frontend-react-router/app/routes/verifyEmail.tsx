@@ -18,7 +18,7 @@ export default function VerifyEmail({ loaderData }: Route.ComponentProps) {
   const navigation = useNavigation();
   const isNavigating = Boolean(navigation.location);
 
-  if (loaderData) {
+  if (loaderData === true) {
     const timer = setTimeout(() => {
       navigate("/");
     }, 3000);

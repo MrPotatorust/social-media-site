@@ -11,6 +11,7 @@ import {
 import { useEffect } from "react";
 import { routeList } from "~/routeList";
 import RepeatPasswordInput from "~/components/form/repeatPassword";
+import { validation } from "~/customFunctions";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   if (params.token) {
@@ -23,16 +24,25 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
   const formData = await request.formData();
-  const password = formData.get("password1");
-  const token = formData.get("token");
+  const password1 = formData.get("password1") as string;
+  const password2 = formData.get("password2") as string;
+  const token = formData.get("token") as string;
+  let errors: any = {};
 
-  if (typeof password === "string" && typeof token === "string") {
-    const response = await api.submitNewPassword(password, token);
+  errors.password1 = validation.validatePassword(password1);
+  errors.password2 = validation.validatePassword(password2);
+
+  if (
+    errors.password1.length === 0 &&
+    errors.password2.length === 0 &&
+    errors.arePasswordsMatch
+  ) {
+    const response = await api.submitNewPassword(password1, token);
     if (response === 200) {
-      return true;
+      return { valid: true };
     }
   }
-  return false;
+  return { valid: false };
 }
 
 export default function ResetPasswordSubmit({
@@ -41,6 +51,8 @@ export default function ResetPasswordSubmit({
   const { routePrivacy } = useOutletContext<OutletContextType>();
   const navigate = useNavigate();
   const fetcher = useFetcher();
+
+  const errors = fetcher.data?.errors;
 
   let mainContent;
 
@@ -60,7 +72,11 @@ export default function ResetPasswordSubmit({
   } else if (loaderData.success) {
     mainContent = (
       <fetcher.Form method="post">
-        <RepeatPasswordInput />
+        <RepeatPasswordInput
+          password1Errors={errors?.password1}
+          password2Errors={errors?.password2}
+          arePasswordsMatch={errors?.arePasswordsMatch}
+        />
         <input
           type="text"
           name="token"

@@ -1,4 +1,4 @@
-import type { RegisterUser } from "./types";
+import type { RegisterUserType } from "./types";
 
 export class api {
   static baseUrl = "http://127.0.0.1:8000/api";
@@ -267,7 +267,7 @@ export class api {
     username,
     email,
     password,
-  }: RegisterUser) {
+  }: RegisterUserType) {
     const url = `${api.baseUrl}/register`;
     try {
       const response = await fetch(url, {

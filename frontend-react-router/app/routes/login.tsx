@@ -73,7 +73,7 @@ export default function Login() {
           {(loginFetcher.state !== "idle" && <p>Pending...</p>) ||
             (data?.state == true && <p>Login Succesfull</p>) ||
             (data?.state == false && <p>Login Failed</p>)}
-          {isNavigating && <p>Redirecting</p>}
+          {isNavigating && data?.state == true && <p>Redirecting</p>}
         </loginFetcher.Form>
         <Link to="/reset-password" className="border-2">
           Reset Password
