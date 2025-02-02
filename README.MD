@@ -1,7 +1,6 @@
 # Social media site
 
-> [!CAUTION]
-> **WORK IT PROGRESS**
+> [!CAUTION] > **WORK IT PROGRESS**
 
 This project is the biggest project as of writing this README.MD
 
@@ -14,6 +13,22 @@ This project is the biggest project as of writing this README.MD
 ### [2. Frontend-react-router](#frontend-react-router)
 
 - Current version that is being developed.
+
+## How to run
+
+### To setup
+
+1. Clone the project from github
+2. Go to the backend directory and run "pip install requirements.txt"
+3. Go to the frontend-react-router directory and run "npm i"
+4. You have to setup redis that is running on "redis://127.0.0.1:6379", to achieve you can follow different tutorials on the internet I am personally running the latest docker image
+
+### To start
+
+1. Start redis running on "redis://127.0.0.1:6379"
+2. Go to the backend directory and run "py manage.py runserver"
+3. Go to the frontend-react-router directory and run "npm run dev"
+4. Now go over to your browser and paste in this "http://localhost:5173/"
 
 ## Point of the project
 
@@ -34,17 +49,21 @@ Its a social media site that I am developing in my free time because I wanted to
 ## Features
 
 #### 1. Auth
+
 - Login, Register
 - Resetting password, Verifying email
 
 #### 2. Posts and interactions
+
 - You can post "posts" and interact with them eg. like, **dislike**, reposts, save
 - Commenting
 
 #### 3. Profiles
+
 - You can look at your and other users profiles (half working)
 
 #### 4. Recommendations
+
 - Recommended posts based on your hashtags (upcoming)
 - Trending hashtags on the homepage
 

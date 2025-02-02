@@ -114,7 +114,7 @@ export default function Registration() {
         <button className="border-2">Register</button>
         {registrationFetcher.data?.valid === true && <p>Login succesfull!</p>}
         {registrationFetcher.data?.valid === true && (
-          <p>Redirecting to login in 3 seconds</p>
+        <p>Redirecting to login in 3 seconds</p>
         )}
       </registrationFetcher.Form>
     </div>

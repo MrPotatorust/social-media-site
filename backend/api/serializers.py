@@ -84,6 +84,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user = User.objects.create(**validated_data)
         UserMetaData.objects.create(user=user)
         return user
+    
+class ChangePasswordSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['password']
 
 # class ProfileSerializer(serializers.ModelSerializer):
 
