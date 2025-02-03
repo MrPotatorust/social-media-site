@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import Post, Like, UserMetaData, Image, Country, Hashtag, PostHashtag, Comment
-from django.contrib.auth.models import User
+from .models import CustomUser, Post, Like, UserMetaData, Image, Country, Hashtag, PostHashtag, Comment
+from django.conf import settings
 
 class LoggedOutPostSerializer(serializers.ModelSerializer):
     author = serializers.CharField()
@@ -71,24 +71,25 @@ class UserMetaDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserMetaData
         fields = '__all__'
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     
     usermetadata = UserMetaDataSerializer(required=False)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = '__all__'
 
     def create(self, validated_data):
-        print(validated_data)
-        user = User.objects.create(**validated_data)
+        user = CustomUser.objects.create(**validated_data)
+        print(user)
         UserMetaData.objects.create(user=user)
         return user
     
 class ChangePasswordSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['password']
 
 # class ProfileSerializer(serializers.ModelSerializer):
@@ -96,13 +97,13 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 #     usermetadata = UserMetaDataSerializer()
 
 #     class Meta:
-#         model = User
+#         model = CustomUser
 #         fields = ['username', 'last_login', 'date_joined', 'usermetadata']
 
 class TestingUserSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['username', 'date_joined']
 
 

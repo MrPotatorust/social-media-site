@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Post, Like, Save, Comment, Repost, Dislike, UserMetaData, PasswordResetToken, EmailAuthToken, Hashtag, PostHashtag
-from django.contrib.auth import authenticate, login
+from .models import CustomUser, Post, Like, Save, Comment, Repost, Dislike, UserMetaData, PasswordResetToken, EmailAuthToken, Hashtag, PostHashtag
+from django.contrib.auth import authenticate, login, password_validation
 from django.contrib.auth.models import User
 from .serializers import LoggedOutPostSerializer, LoggedInPostSerializer, CreateCommentSerializer, UserRegisterSerializer, CreatePostSerializer, ProfileSerializer, HashtagSerializer
 from django.db.models import Count, Case, When, Value, IntegerField, F, Exists, OuterRef
@@ -348,9 +348,10 @@ def test_send_email(request):
 @api_view(['POST'])
 def send_reset_password_token(request):
     email = request.data.get('email')
+
     if email:
         try:
-            user = User.objects.get(email=email)
+            user = CustomUser.objects.get(email=email)
         except:
             return Response(status=status.HTTP_200_OK)
         manager = ResetVerificationTokenManager(PasswordResetTokenGenerator, PasswordResetToken)
@@ -362,9 +363,19 @@ def send_reset_password_token(request):
 @api_view(['POST'])
 def reset_password_submit(request):
     password = request.data.get('password')
+
+
     token = request.data.get('token')
     password_reset_object = PasswordResetToken.objects.get(token=token)
     user = password_reset_object.user
+
+    try:
+        password_validation.validate_password(password, user)
+    except Exception as e:
+        print(e)
+        return Response(e,status=status.HTTP_400_BAD_REQUEST)
+
+
     token_generator = PasswordResetTokenGenerator()
 
     # ? if the the token is more than 30 minutes old its invalid (< is reversed)

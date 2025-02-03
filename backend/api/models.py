@@ -1,14 +1,18 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.db.models import UniqueConstraint
+from django.conf import settings
 
 # Create your models here.
 
 
+class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)
+
 class Post(models.Model):
     text = models.TextField(null=False)
     pub_date = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     main_post = models.BooleanField()
     class Meta:
         ordering=["-pub_date"]
@@ -39,7 +43,7 @@ class PostHashtag(models.Model):
         return f"post_id: {self.post_id}, hashtag_id: {self.hashtag_id}"
 
 class Like(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
 
@@ -53,7 +57,7 @@ class Like(models.Model):
             return self.post_id, self.user_id
 
 class Dislike(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
 
@@ -69,7 +73,7 @@ class Dislike(models.Model):
 
 
 class Save(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
 
@@ -81,7 +85,7 @@ class Save(models.Model):
 
 
 class Repost(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateField(auto_now_add=True)
 
@@ -93,7 +97,7 @@ class Repost(models.Model):
 
 
 class Image(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image_name = models.CharField(max_length=30)
     file_path = models.CharField(default="default_image.jpg", max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -105,11 +109,12 @@ class Country(models.Model):
 
 
 class UserMetaData(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     last_action = models.DateTimeField(auto_now_add=True)
     email_verified = models.BooleanField(default=False)
+    is_setup = models.BooleanField(default=False)
     description = models.CharField(max_length=120)
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, default=2)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, default=1)
     language = models.CharField(max_length=13) # ! This has to be reworked with another model 
     private = models.BooleanField(default=True)
     profile_img = models.ForeignKey(Image, on_delete=models.CASCADE, default=1)
@@ -121,7 +126,7 @@ class UserMetaData(models.Model):
 
 
 class EmailAuthToken(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     token = models.CharField(max_length=32)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -130,7 +135,7 @@ class EmailAuthToken(models.Model):
 
 
 class PasswordResetToken(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     token = models.CharField(max_length=32, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     

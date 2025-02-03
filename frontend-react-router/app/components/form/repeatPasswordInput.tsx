@@ -1,5 +1,6 @@
 import React from "react";
 import type { RepeatPasswordInput } from "~/types";
+import { errorMapFunction } from "~/customFunctions";
 
 export default function RepeatPasswordInput(props: RepeatPasswordInput) {
   const { password1Errors, password2Errors, arePasswordsMatch } = props;
@@ -17,9 +18,7 @@ export default function RepeatPasswordInput(props: RepeatPasswordInput) {
           required
         />
         {password1Errors &&
-          password1Errors.map((error) => (
-            <p className="text-red-700">{error}</p>
-          ))}
+          password1Errors.map((error) => errorMapFunction(error))}
       </label>
       <label>
         Repeat Password
@@ -31,9 +30,7 @@ export default function RepeatPasswordInput(props: RepeatPasswordInput) {
           required
         />
         {password1Errors &&
-          password2Errors.map((error) => (
-            <p className="text-red-700">{error}</p>
-          ))}
+          password2Errors.map((error) => errorMapFunction(error))}
       </label>
       {arePasswordsMatch == false && (
         <p className="text-red-700">Passwords dont match</p>

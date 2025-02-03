@@ -1,6 +1,6 @@
 import type { Route } from "./+types/register";
 import { Form, useFetcher, useNavigate, useNavigation } from "react-router";
-import RepeatPasswordInput from "~/components/form/repeatPassword";
+import RepeatPasswordInput from "~/components/form/repeatPasswordInput";
 import { errorMapFunction, validation } from "~/customFunctions";
 import { api } from "~/apiCalls";
 import { useEffect } from "react";
@@ -21,9 +21,12 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
   errors.username = validation.validateUsername(username);
   errors.password1 = validation.validatePassword(password1);
   errors.password2 = validation.validatePassword(password2);
+  errors.email = [];
   errors.arePasswordsMatch = password1 === password2;
 
   if (
+    errors.firstName.length === 0 &&
+    errors.lastName.length === 0 &&
     errors.username.length === 0 &&
     errors.password1.length === 0 &&
     errors.password2.length === 0 &&
@@ -41,7 +44,10 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
       return { valid: true };
     } else {
       for (const field in response) {
-        response[field].map((error: string) => errors[field].push(error));
+        console.log(
+          response[field].map((error: string) => errors[field].push(error))
+        );
+        // response[field].map((error: string) => errors[field].push(error));
       }
     }
   }
@@ -59,6 +65,8 @@ export default function Registration() {
       }, 3000);
     }
   }, [registrationFetcher.data]);
+
+  console.log(registrationFetcher.data);
 
   const errors = registrationFetcher.data?.errors;
 
@@ -104,6 +112,7 @@ export default function Registration() {
             name="email"
             placeholder="john.wick@continental.com"
           />
+          {errors?.email && errors?.email.map(errorMapFunction)}
         </label>
         <RepeatPasswordInput
           password1Errors={errors?.password1}
@@ -114,7 +123,7 @@ export default function Registration() {
         <button className="border-2">Register</button>
         {registrationFetcher.data?.valid === true && <p>Login succesfull!</p>}
         {registrationFetcher.data?.valid === true && (
-        <p>Redirecting to login in 3 seconds</p>
+          <p>Redirecting to login in 3 seconds</p>
         )}
       </registrationFetcher.Form>
     </div>

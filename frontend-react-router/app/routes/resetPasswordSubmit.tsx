@@ -10,8 +10,8 @@ import {
 } from "react-router";
 import { useEffect } from "react";
 import { routeList } from "~/routeList";
-import RepeatPasswordInput from "~/components/form/repeatPassword";
-import { validation } from "~/customFunctions";
+import RepeatPasswordInput from "~/components/form/repeatPasswordInput";
+import { errorMapFunction, validation } from "~/customFunctions";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   if (params.token) {
@@ -31,6 +31,9 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 
   errors.password1 = validation.validatePassword(password1);
   errors.password2 = validation.validatePassword(password2);
+  errors.arePasswordsMatch = password1 === password2;
+
+  console.log("running client Action");
 
   if (
     errors.password1.length === 0 &&
@@ -38,11 +41,18 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
     errors.arePasswordsMatch
   ) {
     const response = await api.submitNewPassword(password1, token);
-    if (response === 200) {
+
+    console.log(response);
+    if (response.status === "failed") {
+      return { fail: true, valid: false };
+    }
+
+    if (response.status === 200) {
       return { valid: true };
     }
+    errors.generalPassword = response?.json;
   }
-  return { valid: false };
+  return { errors: errors, valid: false };
 }
 
 export default function ResetPasswordSubmit({
@@ -54,13 +64,15 @@ export default function ResetPasswordSubmit({
 
   const errors = fetcher.data?.errors;
 
+  console.log(fetcher.data);
+
   let mainContent;
 
   useEffect(() => {
     routePrivacy(routeList.Login.routeAuth, navigate);
   }, []);
 
-  if (fetcher.data) {
+  if (fetcher.data?.valid) {
     mainContent = (
       <>
         <h1 className="text-4xl text-green-500">Successfully reset password</h1>
@@ -77,6 +89,12 @@ export default function ResetPasswordSubmit({
           password2Errors={errors?.password2}
           arePasswordsMatch={errors?.arePasswordsMatch}
         />
+        {fetcher.data?.fail ? (
+          <h2 className="text-red-700 text-4xl">API FAIL</h2>
+        ) : (
+          errors?.generalPassword &&
+          errors.generalPassword.map((error: string) => errorMapFunction(error))
+        )}
         <input
           type="text"
           name="token"

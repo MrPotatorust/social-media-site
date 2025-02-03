@@ -74,6 +74,11 @@ export interface RepeatPasswordInput {
   arePasswordsMatch: boolean;
 }
 
+export interface SubmitPasswordType {
+  json: object;
+  status: number;
+}
+
 // export interface LooseObject {
 //   [key: string]: any;
 // }

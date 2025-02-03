@@ -3,6 +3,8 @@ export function errorMapFunction(error: string) {
 }
 
 export class validation {
+
+  //! I can optimize the whole process later on using this function
   static arePasswordsValid(password1: string | null, password2: string | null) {
     let errors = [];
 

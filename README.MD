@@ -25,7 +25,7 @@ This project is the biggest project as of writing this README.MD
 
 ### To start
 
-1. Start redis running on "redis://127.0.0.1:6379"
+1. Start redis running on "redis://127.0.0.1:6379" I used to run this "docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest"
 2. Go to the backend directory and run "py manage.py runserver"
 3. Go to the frontend-react-router directory and run "npm run dev"
 4. Now go over to your browser and paste in this "http://localhost:5173/"

@@ -1,4 +1,4 @@
-import type { RegisterUserType } from "./types";
+import type { RegisterUserType, SubmitPasswordType } from "./types";
 
 export class api {
   static baseUrl = "http://127.0.0.1:8000/api";
@@ -202,9 +202,15 @@ export class api {
           token: token,
         }),
       });
-      return response.status;
+      return {
+        json: await response.json(),
+        status: response.status,
+      };
     } catch (err) {
-      return `Fetch of submitNewPassword failed ${err}`;
+      return {
+        json: `Fetch of submitNewPassword failed ${err}`,
+        status: "failed",
+      };
     }
   }
 
