@@ -277,8 +277,10 @@ def handle_post_interaction(request):
 
 
 @api_view(['GET'])
-@auth_check 
+# @auth_check 
 def get_profile(request, user):
+
+
     try:
         queryset = UserMetaData.objects.select_related(
             "user",
@@ -286,16 +288,27 @@ def get_profile(request, user):
             "profile_img",                                           
         ).get(user__username=user)
     except:
-        return Response("No profile",status=status.HTTP_200_OK)
+        return Response("No profile",status=status.HTTP_403_FORBIDDEN)
     
+    token = Token.objects.filter(key=request.COOKIES.get("auth_token")).first()
 
-    if queryset.private == True:
-        return Response("Profile is private", status=status.HTTP_200_OK)
+    if token is not None:
+        request_user = token.user
+    else:
+        request_user = None
 
+
+
+    if not queryset.is_setup and request_user == queryset.user:
+        return Response("Profile is not setup", status=status.HTTP_403_FORBIDDEN)
+
+    if queryset.private and request_user != queryset.user:
+        return Response("Profile is private", status=status.HTTP_403_FORBIDDEN)
+        
     try:
         serializer = ProfileSerializer(queryset).data
     except:
-        return Response("Could not serialize", status=status.HTTP_403_FORBIDDEN)
+        return Response("Could not serialize", status=status.HTTP_404_NOT_FOUND)
     return Response(serializer, status=status.HTTP_200_OK)
 
 
@@ -341,7 +354,7 @@ def test_send_email(request):
 
 
 # ! REWORK THIS make it more readable
-# ! REWORK THIS add timeout for new password every 30 minutes, minimum requirements for password 
+# ! REWORK THIS add timeout for new password every 30 minutes
 # found out that token time checking is already implemented in "PasswordResetTokenGenerator"
 
 @api_view(['POST'])

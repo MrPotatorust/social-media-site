@@ -6,6 +6,13 @@ import type { OutletContextType } from "~/types";
 
 export async function clientLoader({ params, request }: Route.LoaderArgs) {
   let profile = await api.getProfile(params.username);
+
+  if (profile === "Profile is not setup") {
+    return "setup your profile";
+  }
+  if (profile === "Profile is private") {
+    return "profile is private";
+  }
   if (profile === false) {
     return false;
   }
@@ -44,6 +51,12 @@ export default function Profile({ loaderData }: Route.ComponentProps) {
   const verificationEmailFetcher = useFetcher();
   const [verificationSent, setVerificationSent] = useState<boolean>(false);
 
+  if (loaderData === "setup your profile"){
+    return <h2>Setup your profile</h2>
+  }
+  if (loaderData === "profile is private") {
+    return <h2 className=" text-4xl">Profile is private</h2>;
+  }
 
   if (loaderData === false) {
     return <h2 className="text-red-600 text-4xl">Failed to get the profile</h2>;
