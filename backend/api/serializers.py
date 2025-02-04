@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import CustomUser, Post, Like, UserMetaData, Image, Country, Hashtag, PostHashtag, Comment
 from django.conf import settings
+from django.contrib.auth import password_validation
 
 class LoggedOutPostSerializer(serializers.ModelSerializer):
     author = serializers.CharField()
@@ -81,8 +82,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        user = CustomUser.objects.create(**validated_data)
-        print(user)
+        user = CustomUser.objects.create_user(**validated_data)
         UserMetaData.objects.create(user=user)
         return user
     

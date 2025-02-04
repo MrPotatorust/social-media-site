@@ -121,7 +121,9 @@ export default function Registration() {
         />
         {errors?.password && errors?.password.map(errorMapFunction)}
         <button className="border-2">Register</button>
-        {registrationFetcher.data?.valid === true && <p>Login succesfull!</p>}
+        {registrationFetcher.data?.valid === true && (
+          <p>Successfully registered!</p>
+        )}
         {registrationFetcher.data?.valid === true && (
           <p>Redirecting to login in 3 seconds</p>
         )}

@@ -64,8 +64,6 @@ export default function ResetPasswordSubmit({
 
   const errors = fetcher.data?.errors;
 
-  console.log(fetcher.data);
-
   let mainContent;
 
   useEffect(() => {

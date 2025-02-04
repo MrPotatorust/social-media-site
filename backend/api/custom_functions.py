@@ -126,7 +126,8 @@ class ResetVerificationTokenManager:
             usermedatadata.save()
         except User.DoesNotExist:
             return Response(status=status.HTTP_200_OK)
-        except:
+        except Exception as e:
+            print(e)
             return Response('something went wrong', status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(status=status.HTTP_200_OK)
     

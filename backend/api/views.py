@@ -177,7 +177,6 @@ def get_comments(request, post_id):
 @api_view(['POST'])
 def register_user(request):
     serializer = UserRegisterSerializer(data=request.data)
-    serializer.is_valid()
     if serializer.is_valid():
         serializer.save()
         
@@ -384,7 +383,7 @@ def reset_password_submit(request):
     if token_generator.check_token(user, token):
         user.set_password(password)
         user.save()
-    return Response(status=status.HTTP_200_OK)
+    return Response("successfully reset password",status=status.HTTP_200_OK)
 
 # ! REWORK this token generation is very flawed because it generates very simple tokens, rework should resemble django "PasswordResetTokenGenerator"
 
