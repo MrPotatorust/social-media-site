@@ -149,7 +149,7 @@ def get_posts(request, search_query):
 
     base_queryset = base_queryset.filter(main_post = True).order_by("-pub_date")
 
-    if search_query != 'null':
+    if search_query != '&&null':
         queryset = base_queryset.filter(text__contains = search_query)[:20]
     else:
         queryset = base_queryset[:20]
@@ -279,6 +279,16 @@ def handle_post_interaction(request):
 @api_view(['GET'])
 # @auth_check 
 def get_profile(request, user):
+    
+    token = Token.objects.filter(key=request.COOKIES.get("auth_token")).first()
+
+    if token is not None:
+        request_user = token.user
+    else:
+        request_user = None
+
+    if user == "&&null" and request_user:
+        user = request_user.username
 
 
     try:
@@ -288,29 +298,21 @@ def get_profile(request, user):
             "profile_img",                                           
         ).get(user__username=user)
     except:
-        return Response("No profile",status=status.HTTP_403_FORBIDDEN)
-    
-    token = Token.objects.filter(key=request.COOKIES.get("auth_token")).first()
-
-    if token is not None:
-        request_user = token.user
-    else:
-        request_user = None
-
-
-
-    if not queryset.is_setup and request_user == queryset.user:
-        return Response("Profile is not setup", status=status.HTTP_403_FORBIDDEN)
+        return Response({"error": "No profile"},status=status.HTTP_403_FORBIDDEN)
 
     if queryset.private and request_user != queryset.user:
-        return Response("Profile is private", status=status.HTTP_403_FORBIDDEN)
-        
+        return Response({"error": "Profile is private"}, status=status.HTTP_403_FORBIDDEN)
+
     try:
         serializer = ProfileSerializer(queryset).data
     except:
-        return Response("Could not serialize", status=status.HTTP_404_NOT_FOUND)
-    return Response(serializer, status=status.HTTP_200_OK)
+        return Response({"error": "Could not serializer"}, status=status.HTTP_404_NOT_FOUND)
 
+    if not queryset.is_setup and request_user == queryset.user:
+        return Response({"error": "Profile is not setup", "data": serializer}, status=status.HTTP_403_FORBIDDEN)
+
+        
+    return Response({"data": serializer}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_image(request, media_path):

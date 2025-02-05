@@ -95,7 +95,7 @@ export class api {
     if (searchQuery) {
       modifiedSearchQuery = searchQuery;
     } else {
-      modifiedSearchQuery = "null";
+      modifiedSearchQuery = "&&null";
     }
     const url = `${api.baseUrl}/get-posts/${modifiedSearchQuery}`;
     try {

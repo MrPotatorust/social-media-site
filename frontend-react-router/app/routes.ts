@@ -23,7 +23,7 @@ const exportRoutes = [
   layout("layout/authWrapper.tsx", [
     layout("layout/mainLayout.tsx", [
       index("routes/home.tsx"),
-      route("profile/:username", "routes/profile.tsx"),
+      route("profile/:username?", "routes/profile.tsx"),
       route("login", "routes/login.tsx"),
       route("reset-password", "routes/resetPassword.tsx"),
       route(

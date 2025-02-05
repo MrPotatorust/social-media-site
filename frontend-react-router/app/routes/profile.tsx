@@ -1,21 +1,11 @@
-import { useFetcher, useOutletContext } from "react-router";
+import { useFetcher, useOutletContext, Link } from "react-router";
 import type { Route } from "./+types/profile";
 import { api } from "~/apiCalls";
 import { useEffect, useState } from "react";
 import type { OutletContextType } from "~/types";
 
+//! this code is a copy of the code from profileSetup.tsx
 export async function clientLoader({ params, request }: Route.LoaderArgs) {
-  let profile = await api.getProfile(params.username);
-
-  if (profile === "Profile is not setup") {
-    return "setup your profile";
-  }
-  if (profile === "Profile is private") {
-    return "profile is private";
-  }
-  if (profile === false) {
-    return false;
-  }
   if (request) {
     const url = request.url;
     const searchParams = new URLSearchParams(
@@ -31,7 +21,27 @@ export async function clientLoader({ params, request }: Route.LoaderArgs) {
       return null;
     }
   }
-  return { profile };
+
+  let profile;
+
+  if (params.username) {
+    profile = await api.getProfile(params.username);
+  } else if (typeof localStorage.getItem("username") === "string") {
+    profile = await api.getProfile(localStorage.getItem("username") as string);
+  } else {
+    profile = await api.getProfile("&&null");
+  }
+
+  if (profile.error === "Profile is not setup") {
+    return { error: "profile is not setup", data: profile.data };
+  }
+  if (profile.error === "Profile is private") {
+    return { error: "profile is private" };
+  }
+  if (profile === false) {
+    return { error: "something went wrong" };
+  }
+  return { data: profile.data };
 }
 
 export async function clientAction({ request }: Route.ClientActionArgs) {
@@ -49,18 +59,9 @@ export async function clientAction({ request }: Route.ClientActionArgs) {
 export default function Profile({ loaderData }: Route.ComponentProps) {
   const imageFetcher = useFetcher();
   const verificationEmailFetcher = useFetcher();
+  const editProfileFetcher = useFetcher();
   const [verificationSent, setVerificationSent] = useState<boolean>(false);
 
-  if (loaderData === "setup your profile"){
-    return <h2>Setup your profile</h2>
-  }
-  if (loaderData === "profile is private") {
-    return <h2 className=" text-4xl">Profile is private</h2>;
-  }
-
-  if (loaderData === false) {
-    return <h2 className="text-red-600 text-4xl">Failed to get the profile</h2>;
-  }
   const {
     country,
     description,
@@ -68,20 +69,71 @@ export default function Profile({ loaderData }: Route.ComponentProps) {
     last_action,
     user,
     profile_img,
-  } = loaderData?.profile;
+  } = loaderData?.data;
 
   useEffect(() => {
     imageFetcher.submit({ imgPath: profile_img.file_path }, { method: "get" });
+  }, [profile_img]);
+
+  useEffect(() => {
     if (verificationEmailFetcher.data === true && !verificationSent) {
       setVerificationSent(true);
     }
-  }, [profile_img, verificationEmailFetcher.data]);
+  }, [verificationEmailFetcher.data]);
 
   function sendEmailVerification() {
     verificationEmailFetcher.submit(
       { action: "sendVerificationEmail" },
       { method: "post" }
     );
+  }
+
+  if (loaderData?.error === "profile is not setup") {
+    return (
+      <>
+        <h2 className="text-orange-600 font-bold">
+          Your profile isnt setup yet so for other people its private by default
+        </h2>
+        <editProfileFetcher.Form>
+          <input type="text" defaultValue={user.username} />
+          {imageFetcher.state != "idle" ? (
+            <p>Loading profile picture...</p>
+          ) : imageFetcher.data?.profileImg ? (
+            <img
+              src={URL.createObjectURL(imageFetcher.data?.profileImg)}
+              alt={profile_img.image_name}
+            />
+          ) : (
+            <p className="text-red-700">Get of image failed</p>
+          )}
+          <h3>Bio:</h3>
+          <input type="text" defaultValue={description} />
+          <p>Country: {country.iso}</p>
+          <p>
+            Email verified:{" "}
+            {email_verified ? (
+              <strong className="text-green-800">verified</strong>
+            ) : (
+              <>
+                <strong className="text-red-800">not verified</strong>{" "}
+                {!verificationSent ? (
+                  <button onClick={sendEmailVerification}>Verify</button>
+                ) : (
+                  <p className="text-green-700">Verification sent!</p>
+                )}
+              </>
+            )}
+          </p>
+        </editProfileFetcher.Form>
+      </>
+    );
+  }
+  if (loaderData?.error === "profile is private") {
+    return <h2 className=" text-4xl">Profile is private</h2>;
+  }
+
+  if (loaderData?.error === "something went wrong") {
+    return <h2 className="text-red-600 text-4xl">Failed to get the profile</h2>;
   }
 
   return (
